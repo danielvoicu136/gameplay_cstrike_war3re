@@ -1,1 +1,6 @@
-[CSTRIKE MOD] Warcraft War3FT Level 25 , Loot Box , New Item , New Race , Loot Item , Maintenance Updates
+This is an unofficial update for Warcraft as Counter-Strike Mod 
+- Maintenance Updates 
+- New Level Max 25 and Ultimate Max Level 4 (each level reduce cooldown)
+- New Shop, Items, Loot Items
+- New Race 
+
