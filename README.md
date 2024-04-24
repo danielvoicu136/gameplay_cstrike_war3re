@@ -6,7 +6,8 @@ This is Warcraft as Counter-Strike Mod
 - Ultimate maximum level 4 (each level decrease cooldown)
 - Buy magic items with money $
 - Lose magic items on death in loot box
-- More races soon ...
-- More maintenance updates soon ...
-- Press M to open the game main menu 
+- New races
+- Press M to open the game main menu
+- More maintenance updates ... 
+
 
