@@ -8,6 +8,6 @@ This is Warcraft as Counter-Strike Mod
 - Lose magic items on death in loot box
 - New races
 - Press M to open the game main menu
-- More maintenance updates ... 
+- More maintenance updates
 
 
