@@ -1,5 +1,5 @@
 This is Warcraft as Counter-Strike Mod 
-- Select the race you preffer , each with different magic powers and eliminate your opponents 
+- Select the race you prefer , each with different magic powers and eliminate your opponents 
 - Race maximum level 25
 - Experience progression is balanced   
 - Skill maximum level 7 (each level enpower the skill) 
