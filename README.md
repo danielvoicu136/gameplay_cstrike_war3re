@@ -1,6 +1,6 @@
 This is Warcraft as Counter-Strike Mod 
 - Select the race you prefer , each with different magic powers and eliminate your opponents
-- 73 New races
+- 73 new races
 - Race maximum level 25
 - Experience progression is balanced   
 - Skill maximum level 7 (each level enpower the skill) 
