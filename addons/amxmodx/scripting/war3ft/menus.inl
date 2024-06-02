@@ -998,158 +998,204 @@ public _MENU_ResetXP( id, key )
 	return PLUGIN_HANDLED;
 }
 
-// Function will display the changerace menu
-public MENU_ChangeRace( id, iRaceXP[MAX_RACES] )
+
+
+// Function will create and display the changerace menu 
+
+public MENU_ChangeRace( id, iRaceXP[MAX_RACES],iRaceLVL[MAX_RACES], pos )
 {
+	if(pos < 0)
+	{
+		g_menuPosition[id] = 0
+		return
+	}
+	new szEXP[256], szLVL[1024], szRaceName[64];
 	
-	new szRaceName[MAX_RACES+1][64], i, pos, iKeys = 0, szMenu[1024], szXP[16];
-
-	// Get our race names
-	for ( i = 0; i < get_pcvar_num( CVAR_wc3_races ); i++ )
+	static start
+	start = pos * 8
+	
+	static maxitem
+	maxitem = MAX_RACES
+	
+	if(start >= maxitem)
+		start = pos = g_menuPosition[id]
+	
+	static racemenu[65536], len
+	len = formatex(racemenu, 65535, "\ySelect Race");
+	
+	static end
+	end = start + 8
+	
+	if(end > maxitem)
+		end = maxitem
+	
+	static keys
+	keys = MENU_KEY_0
+	
+	static a, b
+	b = 0
+	
+	len += formatex(racemenu[len], 65535 - len, "\y\RXP               \RLeve l^nPage: %d/10^n^n", pos + 1  );
+	
+	
+	for(a = start; a < end; ++a)
 	{
-		lang_customGetRaceName( i + 1, id, szRaceName[i], 63 );
-	}
-
-	pos += formatex( szMenu[pos], 1024-pos, "%L", id, "MENU_SELECT_RACE" );
-	//pos += formatex( szMenu[pos], 1024-pos, "\ySelect Race" );
-
-
-	// Then add the experience column
-	if ( get_pcvar_num( CVAR_wc3_save_xp ) )
-	{
-		//pos += formatex( szMenu[pos], 1024-pos, "\R%L^n^n", id, "MENU_WORD_EXPERIENCE" );
-		pos += formatex( szMenu[pos], 1024-pos, "\RLeve l^n^n");
-	}
-	else
-	{
-		pos += formatex( szMenu[pos], 1024-pos, "^n^n" );
-	}
-
-	// Build the changerace menu (for every race)
-	for ( i = 0; i < get_pcvar_num( CVAR_wc3_races ); i++ )
-	{
-
-		XP_GetLevelByXP( iRaceXP[i])
-
-		//num_to_str( iRaceXP[i], szXP, 15 );
-		num_to_str( XP_GetLevelByXP(iRaceXP[i]), szXP, 15 );
+		num_to_str( iRaceXP[a], szEXP, 255 );
+		formatex(szLVL, charsmax(szLVL), "%d",iRaceLVL[a]); 
 		
-		// Add the "Select a Hero" message if necessary
-		if ( i == 4 )
+		lang_GetRaceName( a+1, id, szRaceName, 63 );
+		
+		// Current race
+		if ( a == p_data[id][P_RACE] - 1 )
 		{
-			//pos += format( szMenu[pos], 512-pos, "%L", id, "SELECT_HERO" );
-			  pos += formatex( szMenu[pos], 1024-pos, "^n" );
-		}
-
-		if ( i == 8 )
-		{
-			//pos += format( szMenu[pos], 512-pos, "%L", id, "SELECT_HERO" );
-			  pos += formatex( szMenu[pos], 1024-pos, "^n" );
+			keys |= (1<<b)
+			
+			len += formatex(racemenu[len], 65535 - len, "\y%d. \d%s \R%s               \R%s^n", ++b, szRaceName, szEXP, szLVL);
+		
 		}
 		
-		// User's current race
-		if ( i == p_data[id][P_RACE] - 1 )
+		// Next race 
+		else if ( a == p_data[id][P_CHANGERACE] - 1 )
 		{
-			pos += formatex( szMenu[pos], 1024-pos, "\y%d. %s\d\R%s^n", i + 1, szRaceName[i], ( (get_pcvar_num( CVAR_wc3_save_xp )) ? szXP : " " ) );
-
-			iKeys |= (1<<i);
+			keys |= (1<<b)
+			
+			len += formatex(racemenu[len], 65535 - len, "\y%d. %s \R%s               \R%s^n", ++b, szRaceName, szEXP, szLVL);
+		
 		}
-
-		// Race the user wants to change to
-		else if ( i == p_data[id][P_CHANGERACE] - 1 )
-		{
-			pos += formatex( szMenu[pos], 1024-pos, "\r%d. %s\r\R%s^n", i + 1, szRaceName[i], ( (get_pcvar_num( CVAR_wc3_save_xp )) ? szXP : " " ) );
-
-			iKeys |= (1<<i);
-		}
-
+		
 		// All other cases
 		else
 		{
-			/*
-			new iRaceLimit = get_pcvar_num( CVAR_wc3_race_limit );
 			new bool:bAllowRace = true;
-
-			if ( iRaceLimit > 0 )
-			{
-				new iTotal[MAX_RACES];
-
-				// Get how many people are using each race
-				new iPlayers[32], iNumPlayers, i, iTarget;
-				get_players( iPlayers, iNumPlayers );
-
-				for ( i = 0; i < iNumPlayers; i++ )
-				{
-					iTarget = iPlayers[i];
-
-					if ( iTarget != id && p_data[iTarget][P_RACE] > 0 && p_data[iTarget][P_RACE] <= get_pcvar_num( CVAR_wc3_races ) )
-					{
-						iTotal[p_data[iTarget][P_RACE]]++;
-					}
-				}
-				
-				// Now if we have more races selected than iRaceLimit provides us with, then we need to increase iRaceLimit
-				while ( HLPR_TotalUsingRaces( iTotal ) > iRaceLimit * get_playersnum() )
-				{
-					iRaceLimit++;
-				}
-
-				// Check to see if there was an increase that was necessary
-				if ( iRaceLimit > get_pcvar_num( CVAR_wc3_race_limit ) )
-				{
-					WC3_Log( true, "Error, increase wc3_race_limit to at least %d", iRaceLimit );
-				}
-
-				if ( iTotal[i+1] >= iRaceLimit )
-				{
-					bAllowRace = false;
-
-				}
-			}*/
-
-			new bool:bAllowRace = true;
-
+			
 			// Check to see if the user can choose this race (are there too many of this race?)
 			if ( bAllowRace )
 			{
-				pos += formatex( szMenu[pos], 1024-pos, "\w%d. %s\y\R%s^n", i + 1, szRaceName[i], ( (get_pcvar_num( CVAR_wc3_save_xp )) ? szXP : " " ) );
-
-				iKeys |= (1<<i);
+				keys |= (1<<b)
+				
+				len += formatex(racemenu[len], 65535 - len, "\y%d.\w %s \y\R%s               \R%s^n", ++b, szRaceName, szEXP, szLVL);
+			
 			}
-
+			
 			// If not, display the race, but don't give them a key to press
 			else
 			{
-				pos += formatex( szMenu[pos], 1024-pos, "\d%d. %s\y\R%s^n", i + 1, szRaceName[i], ( (get_pcvar_num( CVAR_wc3_save_xp )) ? szXP : " " ) );
+				len += formatex(racemenu[len], 65535 - len, "\y%d. \d%s \R%s               \R%s^n", ++b, szRaceName, szEXP, szLVL);
+			}
+		}
+	}
+	
+	if(end != maxitem) 
+	{
+		formatex(racemenu[len], 65535 - len, "^n\y9.\w Next^n\y0.\w %s", pos ? "Back" : "Exit")
+		keys |= MENU_KEY_9
+	}
+	else	
+		formatex(racemenu[len], 65535 - len, "^n\y0.\w %s", pos ? "Back" : "Exit")
+		
+	
+	show_menu(id, keys, racemenu, -1, "ChangeRace")
+	
+	return
+}
+
+
+public _MENU_ChangeRace(id, key) 
+{	
+	switch(key) 
+	{
+		case 8: 
+		{
+			// Make sure the user is on a team!
+			if ( SHARED_IsOnTeam( id ) )
+			{
+				g_menuPosition[id]++
+				
+				DB_GetAllXP( id );
+				
+			}
+			
+			else
+			{
+				client_print( id, print_center, "Please join a team before selecting a race !" );
+			}
+		}
+		case 9: 
+		{
+			// Make sure the user is on a team!
+			if ( SHARED_IsOnTeam( id ) )
+			{
+				g_menuPosition[id]--
+				
+				DB_GetAllXP( id );
+				
+			}
+			
+			else
+			{
+				client_print( id, print_center, "Please join a team before selecting a race !" );
 			}
 		}
 
+		default: 
+		{
+			
+			// User pressed 0 (cancel)
+			if ( MAX_RACES < 9 && key - 1 == MAX_RACES )
+			{
+				return PLUGIN_HANDLED;
+			}
+			
+			// Save the current race data before we change
+			DB_SaveXP( id, false );
+			
+			new iRace
+			iRace = g_menuPosition[id] * 8 + key + 1;
+		
+ 
+			// User currently has a race
+			if ( p_data[id][P_RACE] != 0 )
+			{
+				
+				// Change the user's race at the start of next round
+				if ( iRace != p_data[id][P_RACE] )
+				{
+					
+					// Special message for csdm
+					if ( CVAR_csdm_active > 0 && get_pcvar_num( CVAR_csdm_active ) == 1 )
+					{
+						client_print( id, print_center, "Your race will be changed when you respawn." );
+						client_print( id, print_chat, "%s Your race will be changed when you respawn.", GAME_NAME );
+					}	
+					else
+					{
+						client_print( id, print_center, "Your race will be changed next round.");
+						client_print( id, print_chat, "%s Your race will be changed next round.", GAME_NAME );
+					}
+					
+					p_data[id][P_CHANGERACE] = iRace;
+				}
+				
+				// Do nothing
+				else
+				{
+					p_data[id][P_CHANGERACE] = 0;
+				}
+			}
+			
+			// User doesn't have a race so give it to him!!!
+			else
+			{
+				WC3_SetRace( id, iRace );
+			}
+			return PLUGIN_HANDLED;
+		}
 	}
-
-	iKeys |= (1<<i);
-	
-	// This is needed so we can make the Auto-Select option "0" if the number of races is 9
-	if ( get_pcvar_num( CVAR_wc3_races ) == 9 )
-	{
-		i = -1;
-	}
-
-	pos += format( szMenu[pos], 1024-pos, "%L", id, "SELECT_RACE_FOOTER", i + 1 );
-	
-	// Add a cancel button to the bottom
-	if ( get_pcvar_num( CVAR_wc3_races ) != 9 )
-	{
-		iKeys |= (1<<9);
-
-		pos += format( szMenu[pos], 1024-pos, "^n\w0. %L", id, "WORD_CANCEL" );
-	}
-	
-	// Show the menu to the user!
-	show_menu( id, iKeys, szMenu, -1 );
-	SentSoundSelect(id);
-
-	return;
+	return PLUGIN_HANDLED
 }
+
+// end new 
+
 
 /*HLPR_TotalUsingRaces( iTotalRaces[MAX_RACES] )
 {
@@ -1164,78 +1210,7 @@ public MENU_ChangeRace( id, iRaceXP[MAX_RACES] )
 }*/
 
 
-public _MENU_ChangeRace( id, key )
-{
 
-	if ( !WC3_Check() )
-	{
-		return PLUGIN_HANDLED;
-	}
-	
-	// User pressed 0 (cancel)
-	if ( get_pcvar_num( CVAR_wc3_races ) < 9 && key - 1 == get_pcvar_num( CVAR_wc3_races ) )
-	{
-		return PLUGIN_HANDLED;
-	}
-
-	// Save the current race data before we change
-	DB_SaveXP( id, false );
-
-	new iRace, iAutoSelectKey = KEY_0;
-	
-	if ( get_pcvar_num( CVAR_wc3_races ) != 9 )
-	{
-		iAutoSelectKey = get_pcvar_num( CVAR_wc3_races )
-	}
-	
-	// Auto select a race
-	if ( key == iAutoSelectKey )
-	{
-		iRace = random_num( 1, get_pcvar_num( CVAR_wc3_races ) );
-	}
-
-	// Otherwise race is set
-	else
-	{
-		iRace = key + 1;
-	}
-
-	// User currently has a race
-	if ( p_data[id][P_RACE] != 0 )
-	{
-
-		// Change the user's race at the start of next round
-		if ( iRace != p_data[id][P_RACE] )
-		{
-			
-			// Special message for csdm
-			if ( CVAR_csdm_active > 0 && get_pcvar_num( CVAR_csdm_active ) == 1 )
-			{
-				client_print( id, print_center, "Your race will be changed when you respawn" );
-			}	
-			else
-			{
-				client_print( id, print_center, "%L", id, "CENTER_CHANGED_NEXT" );
-			}
-
-			p_data[id][P_CHANGERACE] = iRace;
-		}
-
-		// Do nothing
-		else
-		{
-			p_data[id][P_CHANGERACE] = 0;
-		}
-	}
-
-	// User doesn't have a race so give it to him!!!
-	else
-	{
-		WC3_SetRace( id, iRace );
-	}
-
-	return PLUGIN_HANDLED;
-}
 
 public MENU_ReplaceItem( id )
 {

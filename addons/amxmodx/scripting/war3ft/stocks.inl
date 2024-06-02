@@ -53,6 +53,22 @@ stock SHARED_IsSecondaryWeapon( iWeaponID )
 	return false;
 }
 
+
+// useful for respawn servers where the gameplay is to fast to manually buy
+	
+stock auto_buy_tome( id )
+{
+	new minMoney = 10000;
+	new tomePrice = ITEM_COST[ITEM_TOME];
+	new totalCost = tomePrice + minMoney;
+	
+	if(SHARED_GetUserMoney( id ) >= totalCost) 
+	{
+		if (ITEM_MenuCanBuyCheck(id)) ITEM_Buy( id, ITEM_TOME );
+	}
+}
+
+
 // ColorChat
 stock ColorChat(const id, const input[], any:...) {
 	new count = 1, players[32];

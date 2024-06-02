@@ -193,9 +193,74 @@
 #define RACE_SHADOW				6
 #define RACE_WARDEN				7
 #define RACE_CRYPT				8
-#define RACE_CHAMELEON			9
+#define RACE_DRAENEI 9
+#define RACE_WORGEN 10
+#define RACE_GOBLIN 11
+#define RACE_TAUREN 12
+#define RACE_WISP 13
+#define RACE_TROLL 14
+#define RACE_PANDAREN 15
+#define RACE_DEMON 16
+#define RACE_FURBOLG 17
+#define RACE_GNOME 18
+#define RACE_NAGA 19
+#define RACE_OGRE 20
+#define RACE_MURLOC 21
+#define RACE_CENTAUR 22
+#define RACE_SATYR 23
+#define RACE_TITAN 24
+#define RACE_NAARU 25
+#define RACE_DWARF 26
+#define RACE_FORSAKEN 27
+#define RACE_EARTHEN 28
+#define RACE_MECHAGNOME 29
+#define RACE_HIGHBORNE 30
+#define RACE_TUSKARR 31
+#define RACE_VRYKUL 32
+#define RACE_GIANT 33
+#define RACE_VULPERA 34
+#define RACE_MOGU 35
+#define RACE_TREANT 36
+#define RACE_BROKEN 37
+#define RACE_DRYAD 38
+#define RACE_YAUNGOL 39
+#define RACE_MANTID 40
+#define RACE_SAUROK 41
+#define RACE_ETHEREAL 42
+#define RACE_STONEBORN 43
+#define RACE_JINYU 44
+#define RACE_HOZEN 45
+#define RACE_ARAKKOA 46
+#define RACE_SPORELING 47
+#define RACE_QUILBOAR 48
+#define RACE_DRAKONID 49
+#define RACE_GNOLL 50
+#define RACE_HARPY 51
+#define RACE_KOBOLD 52
+#define RACE_TOLVIR 53
+#define RACE_WOLVAR 54
+#define RACE_KVALDIR 55
+#define RACE_ANUBISATH 56
+#define RACE_MAGNATAUR 57
+#define RACE_GRUMMLE 58
+#define RACE_TORTOLLAN 59
+#define RACE_SETHRAK 60
+#define RACE_QIRAJI 61
+#define RACE_VOIDWALKER 62
+#define RACE_FELGUARD 63
+#define RACE_GILBLIN 64
+#define RACE_NYMPH 65
+#define RACE_ELEMENTAL 66
+#define RACE_FLAMEWAKER 67
+#define RACE_FACELESS 68
+#define RACE_TAUNKA 69
+#define RACE_KALDOREI 70
+#define RACE_UNSHACKLED 71
+#define RACE_ANKOAN 72
 
-#define MAX_RACES				9
+#define RACE_CHAMELEON			73
+
+#define MAX_RACES				73 // same 
 
 // team ids 
 #define UNASSIGNED 0 
@@ -400,6 +465,7 @@ new g_menuPlayersNum[33]
 new g_menuOption[33]
 new g_menuSettings[33]
 
+
 new gmsgStatusText
 new gmsgBarTime
 
@@ -542,8 +608,327 @@ new bool:g_bGlovesDisabled = false;
 #define ULTIMATE_LOCUSTSWARM	34
 #define PASS_ORB				35
 
-#define MAX_SKILLS				36
+#define SKILL_GIFTOFNAARU             36
+#define SKILL_VINDICATORSHIELD        37
+#define SKILL_HOLYSMITE               38
+#define ULTIMATE_LIGHTWRATH           39
 
+#define SKILL_DARKFLIGHT              40
+#define SKILL_SAVAGEREND              41
+#define SKILL_BLOODHUNT               42
+#define ULTIMATE_WORGENFRENZY         43
+
+#define SKILL_ROCKETBARRAGE           44
+#define SKILL_TIMEISMONEY             45
+#define SKILL_EXPLOSIVETRAP           46
+#define ULTIMATE_BIGBOOM              47
+
+#define SKILL_WARSTOMP                48
+#define SKILL_ENDURANCEAURA           49
+#define SKILL_EARTHSHOCK              50
+#define ULTIMATE_REINCARNATION        51
+
+#define SKILL_DETONATE                52
+#define SKILL_HARVESTENERGY           53
+#define SKILL_FADE                    54
+#define ULTIMATE_SPIRITOFTHEFOREST    55
+
+#define SKILL_BERSERKING              56
+#define SKILL_REGENERATION            57
+#define SKILL_VOODOOHEX               58
+#define ULTIMATE_TROLLRAGE            59
+
+#define SKILL_DRUNKENHAZE             60
+#define SKILL_BREATHOFFIRE            61
+#define SKILL_ROLL                    62
+#define ULTIMATE_STORMEARTHANDFIRE    63
+
+#define SKILL_FELFLAME                64
+#define SKILL_DEMONICLEAP             65
+#define SKILL_SHADOWCLEAVE            66
+#define ULTIMATE_METAMORPHOSIS        67
+
+#define SKILL_HIBERNATE               68
+#define SKILL_MIGHTYROAR              69
+#define SKILL_TOTEMSLAM               70
+#define ULTIMATE_BEARFORM             71
+
+#define SKILL_ENGINEERINGMASTERY      72
+#define SKILL_ESCAPEARTIST            73
+#define SKILL_GADGETRY                74
+#define ULTIMATE_MECHANICALGENIUS     75
+
+#define SKILL_FROSTNOVA               76
+#define SKILL_FORKEDLIGHTNING         77
+#define SKILL_ENSNARE                 78
+#define ULTIMATE_WAVE            	  79
+
+#define SKILL_TWOHEADEDSTRIKE         80
+#define SKILL_OGRESTRENGTH            81
+#define SKILL_CRUSHINGBLOW            82
+#define ULTIMATE_OGREMAGI             83
+
+#define SKILL_MURLOCRUSH              84
+#define SKILL_AQUATICESCAPE           85
+#define SKILL_SLIPPERYSKIN            86
+#define ULTIMATE_CALLOFTHEDEEP        87
+
+#define SKILL_STAMPEDE                88
+#define SKILL_TRAMPLE                 89
+#define SKILL_HARPOONTOOSS            90
+#define ULTIMATE_CENTAURCHARGE        91
+
+#define SKILL_CORRUPTION              92
+#define SKILL_CURSEOFWEAKNESS         93
+#define SKILL_SHADOWSTEP              94
+#define ULTIMATE_DARKRITUAL           95
+
+#define SKILL_TITANSGRIP              96
+#define SKILL_EARTHSHAKER             97
+#define SKILL_COSMICBEAM              98
+#define ULTIMATE_WRATHOFTHETITANS     99
+
+#define SKILL_HOLYNOVA                100
+#define SKILL_LIGHTOFDAWN             101
+#define SKILL_PURIFY                  102
+#define ULTIMATE_BLESSINGOFTHENAARU   103
+
+#define SKILL_STONEFORM               104
+#define SKILL_GUNMASTERY              105
+#define SKILL_EXPLORERSBOUNTY         106
+#define ULTIMATE_AVATAR               107
+
+#define SKILL_TOUCHOFTHEGRAVE         108
+#define SKILL_WILLOFTHEFORSAKEN       109
+#define SKILL_BLIGHTSPRAY             110
+#define ULTIMATE_PLAGUEOFUNDEATH      111
+
+#define SKILL_STONESKIN               112
+#define SKILL_GROUNDSLAM              113
+#define SKILL_HARDENEDRESOLVE         114
+#define ULTIMATE_LIVINGSTONE          115
+
+#define SKILL_HYPERCHARGE             116
+#define SKILL_COMBATANALYSIS          117
+#define SKILL_EMERGENCYREPAIRS        118
+#define ULTIMATE_MECHAOVERDRIVE       119
+
+#define SKILL_ARCANEBLAST             120
+#define SKILL_MANASHIELD              121
+#define SKILL_ANCIENTKNOWLEDGE        122
+#define ULTIMATE_ARCANEASCENDANCY      123
+
+#define SKILL_FISHINGNET              124
+#define SKILL_ICEARMOR                125
+#define SKILL_TUSKSTRIKE              126
+#define ULTIMATE_CALLOFTHETIDES       127
+
+#define SKILL_RUNICEMPOWERMENT        128
+#define SKILL_DRAGONSROAR             129
+#define SKILL_BATTLEHARDENED          130
+#define ULTIMATE_VRYKULSWRATH         131
+
+#define SKILL_GIANTSSTOMP             132
+#define SKILL_MOUNTAINSTRENGTH        133
+#define SKILL_BOULDERTHROW            134
+#define ULTIMATE_COLOSSALSMASH        135
+
+#define SKILL_BAGOFTRICKS             136
+#define SKILL_SCAVENGERSCUNNING       137
+#define SKILL_DUSTCLOUD               138
+#define ULTIMATE_NOMADICSPIRIT        139
+
+#define SKILL_LIGHTNINGLASH           140
+#define SKILL_STONEGUARD              141
+#define SKILL_SPIRITLINK              142
+#define ULTIMATE_TITANSWILL           143
+
+#define SKILL_ROOTSTRIKE              144
+#define SKILL_NATURESEMBRACE          145
+#define SKILL_BARKSKIN                146
+#define ULTIMATE_ANCIENTAWAKENING      147
+
+#define SKILL_FELRESISTANCE           148
+#define SKILL_CHAINHEAL               149
+#define SKILL_DARKSTRIKE            	150
+#define ULTIMATE_FERALSPIRIT          151
+
+#define SKILL_NATURESWRATH            152
+#define SKILL_FORESTSGRACE            153
+#define SKILL_HEALINGTOUCH            154
+#define ULTIMATE_WRATHOFTHEWILDS      155
+
+#define SKILL_FIREBRAND               156
+#define SKILL_WILDCHARGE              157
+#define SKILL_BURNINGRAGE             158
+#define ULTIMATE_INFERNOCHARGE        159
+
+#define SKILL_BLADEDDANCE             160
+#define SKILL_AMBERPRISON             161
+#define SKILL_QUICKSTRIKE             162
+#define ULTIMATE_SWARMSFURY           163
+
+#define SKILL_POISONSPIT              164
+#define SKILL_CLAWFRENZY              165
+#define SKILL_CAMOUFLAGE              166
+#define ULTIMATE_PRIMALRAGE           167
+
+#define SKILL_DIMENSIONALSHIFT        168
+#define SKILL_MANADRAIN               169
+#define SKILL_ARCANECLOAK             170
+#define ULTIMATE_NETHERSTORM          171
+
+#define SKILL_PETRIFY                 172
+#define SKILL_EARTHQUAKE              173
+#define SKILL_ROCKARMOR               174
+#define ULTIMATE_STONETITAN           175
+
+#define SKILL_WATERJET                176
+#define SKILL_HEALINGRAIN             177
+#define SKILL_TIDALSURGE              178
+#define ULTIMATE_WATERSPOUT           179
+
+#define SKILL_BANANATOSS              180
+#define SKILL_AGILITYBOOST            181
+#define SKILL_FRENZIEDDANCE           182
+#define ULTIMATE_PRIMALHOWL           183
+
+#define SKILL_DARKTALON               184
+#define SKILL_SOLARBEAM               185
+#define SKILL_CURSEOFSETHE            186
+#define ULTIMATE_SHADOWNOVA           187
+
+#define SKILL_SPOREBUST               188
+#define SKILL_REGROWTH                189
+#define SKILL_FUNGUSSHIELD            190
+#define ULTIMATE_SPOREEXPLOSION       191
+
+#define SKILL_RAZORQUILLS             192
+#define SKILL_CHARGE                  193
+#define SKILL_EARTHSPIKE              194
+#define ULTIMATE_STAMPEDE             195
+
+#define SKILL_DRAGONSBREATH           196
+#define SKILL_WINGBUFFET              197
+#define SKILL_TAILSWIPE               198
+#define ULTIMATE_DRAGONFURY           199
+
+#define SKILL_VICIOUSBITE             200
+#define SKILL_GNOLLHOWL               201
+#define SKILL_SCAVENGERSINSTINCT      202
+#define ULTIMATE_PACKLEADER           203
+
+#define SKILL_SCREECH                 204
+#define SKILL_TALONSTRIKE             205
+#define SKILL_WINDGUST                206
+#define ULTIMATE_TEMPEST              207
+
+#define SKILL_CANDLESASH              208
+#define SKILL_TUNNELING               209
+#define SKILL_SCURRY                  210
+#define ULTIMATE_CAVEIN               211
+
+#define SKILL_SANDBLAST               212
+#define SKILL_OBSIDIANSKIN            213
+#define SKILL_DUSTSTORM               214
+#define ULTIMATE_GUARDIANOFTHESANDS   215
+
+#define SKILL_FIERCESLASH             216
+#define SKILL_HUNTERSMARK             217
+#define SKILL_PACKTACTICS             218
+#define ULTIMATE_WOLVARSWRATH         219
+
+#define SKILL_SEAMIST                 220
+#define SKILL_GHOSTLYSTRIKE           221
+#define SKILL_UNDYINGWILL             222
+#define ULTIMATE_WRATHOFTHEKVALDIR    223
+
+#define SKILL_SCARABSWARM             224
+#define SKILL_SANDSTORM               225
+#define SKILL_GUARDIANSSHIELD         226
+#define ULTIMATE_ANUBISATHREBIRTH     227
+
+#define SKILL_FROSTBREATH             228
+#define SKILL_SLAM              		229
+#define SKILL_MASSIVECHARGE           230
+#define ULTIMATE_GLACIALCRUSH         231
+
+#define SKILL_LUCKYDO                 232
+#define SKILL_PACKMENTALITY           233
+#define SKILL_NIMBLEFINGERS           234
+#define ULTIMATE_GRUMMLEFORTUNE       235
+
+#define SKILL_SHELLSHIELD             236
+#define SKILL_TIDALWAVE               237
+#define SKILL_WISDOMOFTHEAGES         238
+#define ULTIMATE_TORTOISEGUARDIAN     239
+
+#define SKILL_LIGHTNINGCOIL           240
+#define SKILL_VENOMSPIT               241
+#define SKILL_CONSTRICT               242
+#define ULTIMATE_SERPENTSRAGE         243
+
+#define SKILL_PSYCHICSCREAM           244
+#define SKILL_SANDTRAP                245
+#define SKILL_HIVEMIND                246
+#define ULTIMATE_SWARMCALL            247
+
+#define SKILL_VOIDBOLT                248
+#define SKILL_SHADOWSHIELD            249
+#define SKILL_SIPHONLIFE              250
+#define ULTIMATE_VOIDERUPTION         251
+
+#define SKILL_FELCLEAVE               252
+#define SKILL_DEMONICROAR             253
+#define SKILL_HELLFIRE                254
+#define ULTIMATE_FELSTORM             255
+
+#define SKILL_TOXICSPRAY              256
+#define SKILL_AQUATICDASH             257
+#define SKILL_SLIPPERYESCAPE          258
+#define ULTIMATE_GILBLINFRENZY        259
+
+#define SKILL_NATURESCHARM            260
+#define SKILL_ENTANGLINGROOTS         261
+#define SKILL_HEALINGWATERS           262
+#define ULTIMATE_FORESTSBLESSING      263
+
+#define SKILL_FLAMEBURST              264
+#define SKILL_WATERSPIKE               265
+#define SKILL_QUAKE              		266
+#define ULTIMATE_ELEMENTALOVERLOAD    267
+
+#define SKILL_FIRELASH                268
+#define SKILL_MOLTENARMOR             269
+#define SKILL_INFERNOCHARGE           270
+#define ULTIMATE_LAVABURST            271
+
+#define SKILL_MINDFLAY                272
+#define SKILL_SHADOWEMBRACE           273
+#define SKILL_CORRUPTINGTOUCH         274
+#define ULTIMATE_VOIDCONSUMPTION      275
+
+#define SKILL_BATTLEROAR              276
+#define SKILL_ICESHIELD               277
+#define SKILL_SPIRITBOND              278
+#define ULTIMATE_TAUNKASRESOLVE       279
+
+#define SKILL_MOONFIRE                280
+#define SKILL_STARFALL                281
+#define SKILL_NATURESTOUCH            282
+#define ULTIMATE_WRATHOFELUNE         283
+
+#define SKILL_SEABLAST                284
+#define SKILL_FREEDOMCALL             285
+#define SKILL_TIDALSTRIKE             286
+#define ULTIMATE_UNSHACKLEDSFURY      287
+
+#define SKILL_WATERWHIP               288
+#define SKILL_HEALINGTIDES            289
+#define SKILL_DEEPSEASTRIKE           290
+#define ULTIMATE_TIDALWAVE            291
+
+#define MAX_SKILLS				292   // ITEMS + 1    for 35 we put 36
 
 #define MAX_RACE_SKILLS         3
 
@@ -682,7 +1067,7 @@ new g_szSounds[MAX_SOUNDS][64];
 #define MAX_SPRITES	15
 
 new g_szSprites[MAX_SPRITES][64];
-new g_szRaceSprites[MAX_RACES + 1][64];
+//new g_szRaceSprites[MAX_RACES + 1][64];
 //new g_szLevelSprites[MAX_LEVELS + 1][64];
 
 new g_iRaceSprites[MAX_RACES + 1];
@@ -748,7 +1133,7 @@ new Menu;
 new bChooseTeamOverrideActive[33];
 #define	INFO_FREQ					180.0
 #define VIP_LEVEL		ADMIN_LEVEL_H
-//#define	GAME_NAME	"* [WAR3FT]"
+#define	GAME_NAME	"* [WAR3FT]"
 
 // Used by Clean Binds 
 #define SPRAY				201 			

@@ -312,7 +312,7 @@ SQLITE_GetAllXP( id )
 	// Then we have a problem and cannot retreive the user's XP
 	if ( iUniqueID <= 0 )
 	{
-		client_print( id, print_chat, "%s Unable to retreive your XP from the database, please attempt to changerace later", g_MODclient );
+		client_print( id, print_chat, "%s Unable to retreive your XP, please changerace later.", GAME_NAME );
 
 		WC3_Log( true, "[ERROR] Unable to retreive user's Unique ID" );
 
@@ -348,6 +348,7 @@ SQLITE_GetAllXP( id )
 		if ( iRace > 0 && iRace < MAX_RACES + 1 )
 		{
 			g_iDBPlayerXPInfoStore[id][iRace-1] = iXP;
+			arrPlayerLevelsInfo[id][iRace-1] = XP_GetLevelByXP( iXP );
 		}
 
 		SQL_NextRow( query );
@@ -357,10 +358,11 @@ SQLITE_GetAllXP( id )
 	SQL_FreeHandle( query );
 
 	// Call the function that will display the "select a race" menu
-	WC3_ChangeRaceShowMenu( id, g_iDBPlayerXPInfoStore[id] );
+	WC3_ChangeRaceShowMenu( id, g_menuPosition[id], g_iDBPlayerXPInfoStore[id], arrPlayerLevelsInfo[id] );
 
 	return;
 }
+
 
 SQLITE_SetDataForRace( id )
 {

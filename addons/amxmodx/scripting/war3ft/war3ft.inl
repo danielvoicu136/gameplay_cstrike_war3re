@@ -122,6 +122,7 @@ public WC3_Precache()
 	copy( g_szSprites[SPR_WAVE]			, 63, "sprites/gwave1.spr" );
 	copy( g_szSprites[SPR_IMMOLATE]		, 63, "sprites/warcraft3/fireball.spr" );
 
+/*
 	// Store race sprite names
 	copy( g_szRaceSprites[RACE_NONE]		, 63, "sprites/warcraft3/races/wc3_none_01.spr"		);
 	copy( g_szRaceSprites[RACE_UNDEAD]		, 63, "sprites/warcraft3/races/wc3_undead_01.spr"	);
@@ -133,14 +134,8 @@ public WC3_Precache()
 	copy( g_szRaceSprites[RACE_WARDEN]		, 63, "sprites/warcraft3/races/wc3_warden_01.spr"	);
 	copy( g_szRaceSprites[RACE_CRYPT]		, 63, "sprites/warcraft3/races/wc3_cryptlord_01.spr"	);
 	copy( g_szRaceSprites[RACE_CHAMELEON]	, 63, "sprites/warcraft3/races/wc3_chameleon_01.spr"	);
-
-/*
-	// Store level sprite names
-	for ( i = 0; i < MAX_LEVELS; i++ )
-	{
-		formatex( g_szLevelSprites[i], 63, "sprites/warcraft3/level/a_level_%d.spr", i );
-	}
 */
+
 
 	// Precache models
 	if ( g_MOD == GAME_CSTRIKE || g_MOD == GAME_CZERO )
@@ -191,29 +186,9 @@ public WC3_Precache()
 		}
 	}
 
-	// Check the race sprites
-	for ( i = 0; i <= MAX_RACES; i++ )
-	{
-		if ( !file_exists( g_szRaceSprites[i] ) )
-		{
-			WC3_Log( true, "[ERROR] Missing sprite file '%s'", g_szRaceSprites[i] );
 
-			bError = true;
-		}
-	}
 
-/*
-	// Check the level sprites
-	for ( i = 0; i <= MAX_LEVELS; i++ )
-	{
-		if ( !file_exists( g_szLevelSprites[i] ) )
-		{
-			WC3_Log( true, "[ERROR] Missing sprite file '%s'", g_szLevelSprites[i] );
 
-			bError = true;
-		}
-	}
-*/
 	// All sprite files exist!! Lets continue!
 	if ( !bError )
 	{
@@ -237,20 +212,6 @@ public WC3_Precache()
 			{
 				g_bExtraSpritesEnabled	= true;
 
-				// Precache race sprites
-				for ( i = 0; i <= MAX_RACES; i++ )
-				{
-					g_iRaceSprites[i] = precache_model( g_szRaceSprites[i] );
-				}
-
-			/*
-				// Precache level sprites
-				for ( i = 0; i <= MAX_LEVELS; i++ )
-				{
-					g_iLevelSprites[i] = precache_model( g_szLevelSprites[i] );
-				}
-
-			*/
 			}
 		}
 	}
@@ -600,7 +561,7 @@ WC3_ChangeRaceStart( id )
 		// We're not saving XP, so lets just change the user's race
 		else
 		{
-			WC3_ChangeRaceShowMenu( id );
+			WC3_ChangeRaceShowMenu( id, g_menuPosition[id] = 0 );
 		}
 	}
 
@@ -611,18 +572,20 @@ WC3_ChangeRaceStart( id )
 }
 
 // Function will show the "select a race" menu to the user
-WC3_ChangeRaceShowMenu( id, iRaceXP[MAX_RACES] = {0} )
+WC3_ChangeRaceShowMenu( id, page = 0, iRaceXP[MAX_RACES] = {0}, iRaceLVL[MAX_RACES] = {0} )
 {
 
 	// We don't want to replace the player's current XP with whats in the database now do we ?
 	if ( p_data[id][P_RACE] )
 	{
 		iRaceXP[p_data[id][P_RACE]-1] = p_data[id][P_XP];
+		iRaceLVL[p_data[id][P_RACE]-1] = p_data[id][P_LEVEL]; 
 	}
 
 	// Need to call this here
-	MENU_ChangeRace( id, iRaceXP );
+	MENU_ChangeRace( id, iRaceXP, iRaceLVL, page);
 }
+
 
 // This will actually give the user a given race
 WC3_SetRace( id, race )
