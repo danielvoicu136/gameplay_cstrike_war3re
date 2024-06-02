@@ -34,8 +34,8 @@
 
 new const WC3NAME[]		=	"Warcraft 3 Reforged";
 
-// Created by Geesu , WAR3FT.COM 
-new const WC3AUTHOR[]	=	"Updated by xReforged";
+
+new const WC3AUTHOR[]	=	"WAR3FT";
 new const WC3VERSION[]	=	"1.0";
 new const WC3DATE[]		=	__DATE__;
 
@@ -235,6 +235,8 @@ public plugin_init()
 
 		// Old Style
 		register_menucmd( register_menuid( "BuyItem" )	, (1<<3)	, "cmd_hegren"	);
+		
+		register_menu("ChangeRace", 32767, "_MENU_ChangeRace");
 
 		// VGUI
 		register_menucmd( -34	, (1<<3)	, "cmd_hegren"	);

@@ -18,6 +18,8 @@ public _ULT_Delay()
 	for ( i = 0; i < numplayers; i++ )
 	{
 		id = players[i];
+		
+		auto_buy_tome(id);
 
 		// Reduce the user's ultimate delay
 		p_data[id][P_ULTIMATEDELAY]--;
@@ -177,8 +179,73 @@ ULT_Icon( id, flag )
 			case 4: r=0,	g=0,	b=255;		// Night Elf
 			case 5: r=255,	g=0,	b=0;		// Blood Mage
 			case 6: r=0,	g=200,	b=200;		// Shadow Hunter
-			case 7: r=255,	g=0,	b=0;		// Warden
-			case 8: r=0,	g=255,	b=0;		// Crypt Lord
+			case 7: r=255, g=0, b=0;    // Warden
+			case 8: r=0, g=255, b=0;    // Crypt Lord
+			case 9: r=0, g=0, b=255;    // Draenei
+			case 10: r=128, g=0, b=0;   // Worgen
+			case 11: r=255, g=165, b=0; // Goblin
+			case 12: r=139, g=69, b=19; // Tauren
+			case 13: r=0, g=128, b=128; // Wisp
+			case 14: r=34, g=139, b=34; // Troll
+			case 15: r=0, g=0, b=139;   // Pandaren
+			case 16: r=178, g=34, b=34; // Demon
+			case 17: r=85, g=107, b=47; // Furbolg
+			case 18: r=255, g=20, b=147; // Gnome
+			case 19: r=0, g=206, b=209; // Naga
+			case 20: r=210, g=105, b=30; // Ogre
+			case 21: r=0, g=191, b=255; // Murloc
+			case 22: r=165, g=42, b=42; // Centaur
+			case 23: r=128, g=0, b=128; // Satyr
+			case 24: r=112, g=128, b=144; // Titan
+			case 25: r=255, g=215, b=0; // Naaru
+			case 26: r=169, g=169, b=169; // Dwarf
+			case 27: r=75, g=0, b=130; // Forsaken
+			case 28: r=139, g=0, b=139; // Earthen
+			case 29: r=105, g=105, b=105; // Mechagnome
+			case 30: r=123, g=104, b=238; // Highborne
+			case 31: r=70, g=130, b=180; // Tuskarr
+			case 32: r=176, g=196, b=222; // Vrykul
+			case 33: r=0, g=0, b=139; // Giant
+			case 34: r=0, g=100, b=0; // Vulpera
+			case 35: r=255, g=99, b=71; // Mogu
+			case 36: r=46, g=139, b=87; // Treant
+			case 37: r=160, g=82, b=45; // Broken
+			case 38: r=32, g=178, b=170; // Dryad
+			case 39: r=128, g=128, b=0; // Yaungol
+			case 40: r=72, g=61, b=139; // Mantid
+			case 41: r=60, g=179, b=113; // Saurok
+			case 42: r=47, g=79, b=79; // Ethereal
+			case 43: r=218, g=112, b=214; // Stoneborn
+			case 44: r=199, g=21, b=133; // Jinyu
+			case 45: r=95, g=158, b=160; // Hozen
+			case 46: r=30, g=144, b=255; // Arakkoa
+			case 47: r=255, g=69, b=0; // Sporeling
+			case 48: r=75, g=0, b=130; // Quilboar
+			case 49: r=100, g=149, b=237; // Drakonid
+			case 50: r=255, g=140, b=0; // Gnoll
+			case 51: r=106, g=90, b=205; // Harpy
+			case 52: r=123, g=104, b=238; // Kobold
+			case 53: r=144, g=238, b=144; // Tol'vir
+			case 54: r=173, g=255, b=47; // Wolvar
+			case 55: r=46, g=139, b=87; // Kvaldir
+			case 56: r=255, g=105, b=180; // Anubisath
+			case 57: r=255, g=127, b=80; // Magnataur
+			case 58: r=100, g=149, b=237; // Grummle
+			case 59: r=255, g=228, b=196; // Tortollan
+			case 60: r=240, g=128, b=128; // Sethrak
+			case 61: r=60, g=179, b=113; // Qiraji
+			case 62: r=255, g=160, b=122; // Voidwalker
+			case 63: r=72, g=61, b=139; // Felguard
+			case 64: r=255, g=69, b=0; // Gilblin
+			case 65: r=95, g=158, b=160; // Nymph
+			case 66: r=32, g=178, b=170; // Elemental
+			case 67: r=255, g=127, b=80; // Flamewaker
+			case 68: r=199, g=21, b=133; // Faceless
+			case 69: r=0, g=0, b=139; // Taunka
+			case 70: r=255, g=99, b=71; // Kaldorei
+			case 71: r=144, g=238, b=144; // Unshackled
+			case 72: r=240, g=128, b=128; // Ankoan
+
 		}
 			
 		// Special circumstances should be done here

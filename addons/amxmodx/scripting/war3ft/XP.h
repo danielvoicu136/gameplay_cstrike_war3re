@@ -114,31 +114,31 @@ new iXPGivenShortTerm[MAX_LEVELS+1]				= {
 
 new iXPLevelSaved[MAX_LEVELS+1]					= {
 	0,					// Level 0			0 
-	70,					// Level 1			70 		
-	150,				// Level 2 			80
-	230,				// Level 3			90
-	340,				// Level 4			110
-	510,				// Level 5			170
-	720,				// Level 6			210
-	990,				// Level 7			270
-	1380,				// Level 8			390
-	1940,				// Level 9			560
-	2720,				// Level 10			780
-	3840,				// Level 11			1120
-	4990,				// Level 12 		1150
-	6460,				// Level 13			1470
-	8340,				// Level 14			1880
-	10890,				// Level 15 		2550
-	14160,				// Level 16 		3270
-	18380,				// Level 17			4220
-	22970,				// Level 18			4670
-	28750,				// Level 19			5780
-	35940,				// Level 20			7190
-	44920,				// Level 21			8980
-	56150,				// Level 22			11230
-	69860,				// Level 23			13710
-	86470,				// Level 24			16610
-	109610				// Level 25 		23140
+	250,				// Level 1			70 		
+	500,				// Level 2 			80
+	1000,				// Level 3			90
+	2000,				// Level 4			110
+	4000,				// Level 5			170
+	10000,				// Level 6			210
+	20000,				// Level 7			270
+	30000,				// Level 8			390
+	40000,				// Level 9			560
+	50000,				// Level 10			780
+	60000,				// Level 11			1120
+	70000,				// Level 12 		1150
+	80000,				// Level 13			1470
+	90000,				// Level 14			1880
+	100000,				// Level 15 		2550
+	110000,				// Level 16 		3270
+	120000,				// Level 17			4220
+	130000,				// Level 18			4670
+	140000,				// Level 19			5780
+	150000,				// Level 20			7190
+	160000,				// Level 21			8980
+	170000,				// Level 22			11230
+	180000,				// Level 23			13710
+	190000,				// Level 24			16610
+	200000				// Level 25 		23140
 	};
 
 // Long Term - Amount of XP awarded when killing a user of this level

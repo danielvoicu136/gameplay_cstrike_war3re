@@ -309,7 +309,7 @@ MYSQLX_GetAllXP( id )
 	// Then we have a problem and cannot retreive the user's XP
 	if ( iUniqueID <= 0 )
 	{
-		client_print( id, print_chat, "%s Unable to retreive your XP from the database, please attempt to changerace later", g_MODclient );
+		client_print( id, print_chat, "%s Unable to retreive your XP, please changerace later.", GAME_NAME );
 
 		WC3_Log( true, "[ERROR] Unable to retreive user's Unique ID" );
 
@@ -322,7 +322,7 @@ MYSQLX_GetAllXP( id )
 
 	if ( !SQL_Execute( query ) )
 	{
-		client_print( id, print_chat, "%s Error, unable to retrieve XP, please contact a server administrator", g_MODclient );
+		client_print( id, print_chat, "%s Unable to retrieve your XP, please contact a server administrator.", GAME_NAME );
 
 		MYSQLX_Error( query, szQuery, 6 );
 
@@ -333,6 +333,7 @@ MYSQLX_GetAllXP( id )
 	for ( new i = 0; i < MAX_RACES; i++ )
 	{
 		g_iDBPlayerXPInfoStore[id][i] = 0;
+	
 	}
 
 	// Get the XP!
@@ -348,6 +349,7 @@ MYSQLX_GetAllXP( id )
 		if ( iRace > 0 && iRace < MAX_RACES + 1 )
 		{
 			g_iDBPlayerXPInfoStore[id][iRace-1] = iXP;
+			arrPlayerLevelsInfo[id][iRace-1] = XP_GetLevelByXP( iXP );
 		}
 
 		SQL_NextRow( query );
@@ -357,7 +359,7 @@ MYSQLX_GetAllXP( id )
 	SQL_FreeHandle( query );
 
 	// Call the function that will display the "select a race" menu
-	WC3_ChangeRaceShowMenu( id, g_iDBPlayerXPInfoStore[id] );
+	WC3_ChangeRaceShowMenu( id, g_menuPosition[id], g_iDBPlayerXPInfoStore[id], arrPlayerLevelsInfo[id] );
 
 	return;
 }

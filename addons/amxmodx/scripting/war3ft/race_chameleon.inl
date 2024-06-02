@@ -4,7 +4,7 @@
 
 public CHAM_Randomize()
 {
-	if ( get_pcvar_num( CVAR_wc3_races ) == 9 && get_pcvar_num( CVAR_wc3_cham_random ) )
+	if ( get_pcvar_num( CVAR_wc3_races ) >= 9 && get_pcvar_num( CVAR_wc3_cham_random ) )
 	{
 		new i, iNewSkill, iType;
 

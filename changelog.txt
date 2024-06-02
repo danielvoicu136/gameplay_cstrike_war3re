@@ -1,3 +1,6 @@
+v25.0 RC1.1 
+- Change: 73 Races 
+
 v25.0 RC1
 - Change: Level increased to 25	(progressive easy xp)  
 - Change: Ultimate Level increased from 1 to 4 (each level decrease cooldown) 

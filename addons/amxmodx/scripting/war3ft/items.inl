@@ -22,15 +22,15 @@ ITEM_Init()
 	ITEM_COST[ITEM_FROST]	    = 2000;			// Orb of Frost
 	ITEM_COST[ITEM_HEALTH]	    = 2500;			// Periapt of Health
 	ITEM_COST[ITEM_TOME]	    = 5000;			// Tome of Experience
-	ITEM_COST[ITEM_SCROLL]	    = 7000;			// Scroll of Respawning
+	ITEM_COST[ITEM_SCROLL]	    = 5000;			// Scroll of Respawning
 	ITEM_COST[ITEM_PROTECTANT]	= 1500;			// Mole Protectant
 	ITEM_COST[ITEM_HELM]	    = 3500;			// Helm of Excellence
 	ITEM_COST[ITEM_AMULET]	    = 1500;			// Amulet of the Cat
 	ITEM_COST[ITEM_SOCK]	    = 1500;			// Sock of the Feather
 	ITEM_COST[ITEM_GLOVES]	    = 2000;			// Flaming Gloves of Warmth
-	ITEM_COST[ITEM_RING]	    = 700;			// Ring of Regeneration + 1
+	ITEM_COST[ITEM_RING]	    = 500;			// Ring of Regeneration + 1
 	ITEM_COST[ITEM_CHAMELEON]	= 3500;			// Chameleon
-	ITEM_COST[ITEM_MOLE]	    = 16000;		// Mole
+	ITEM_COST[ITEM_MOLE]	    = 10000;		// Mole
 
 	// Item costs are a little different for DOD
 	if ( g_MOD == GAME_DOD )

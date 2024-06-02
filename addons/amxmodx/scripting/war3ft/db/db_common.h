@@ -38,6 +38,8 @@ new g_iDBPlayerSavedBy[33];
 new g_iDBPlayerSkillStore[33][MAX_SKILLS];
 new g_iDBPlayerXPInfoStore[33][MAX_RACES];
 
+new arrPlayerLevelsInfo[33][MAX_RACES];
+
 // Function Declarations
 forward DB_DetermineType();
 forward DB_Init();
