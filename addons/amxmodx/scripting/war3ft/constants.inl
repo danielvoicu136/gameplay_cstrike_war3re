@@ -82,6 +82,8 @@
 #define TASK_MOLEFIX		3000
 #define TASK_RESETSPAWNS	3001
 #define TASK_UDELAY			3002		// Ultimate delay function
+#define TASK_WAVE_MONEY     4001
+#define TASK_WAVE_MEDICAL_ARMOR     4002
 
 // From ../multiplayer source/dlls/player.cpp
 #define ARMOR_RATIO	 0.7	// Armor Takes 30% of the damage (was .2 in the SDK)
@@ -548,6 +550,7 @@ new bool:g_bLevitation[33];
 
 new bool:g_bOrcNadesDisabled = false;
 new bool:g_bGlovesDisabled = false;
+new bool:g_bLowHealthMap = false;
 
 // ***************************
 // Skill Information
@@ -939,9 +942,9 @@ new bool:g_bGlovesDisabled = false;
 #define MIN_ULT_LEVEL           6
 
 // Increased Cooldown by Ultimate Level
-new const p_ultimatereduce[MAX_ULTIMATE_LEVEL] =		{15, 10, 5, 0};
+new const p_ultimatereduce[MAX_ULTIMATE_LEVEL] =		{10, 7, 3, 0};
 new const p_ultimateunlock[MAX_ULTIMATE_LEVEL] =		{6, 12, 18, 24};	
-#define ULTIMATE_SECURITY_TIME 7	// set a value to prevent instant ultimate ready
+#define ULTIMATE_SECURITY_TIME 10	// set a value to prevent instant ultimate ready
 
 
 // Used with g_SkillType
@@ -966,9 +969,7 @@ new bool:g_bPlayerSkills[33][MAX_SKILLS];		// Stores what skills the player has 
 
 // Constants for Abilities
 
-new const Float:p_vampiric[MAX_SKILL_LEVEL] =			{0.09, 0.10, 0.11, 0.12, 0.13, 0.14, 0.15}					// Vampiric Aura			(skill 1)
-
-
+new const Float:p_vampiric[MAX_SKILL_LEVEL] =			{0.10, 0.12, 0.14, 0.16, 0.18, 0.20, 0.25}					// Vampiric Aura			(skill 1)
 new Float:p_unholy[MAX_SKILL_LEVEL] =					{265.0, 267.0, 270.0, 273.0, 275.0, 280.0, 285.0}			// Unholy Aura				(skill 2)
 new Float:p_unholy_dod[MAX_SKILL_LEVEL] =				{10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 100.0}					// Unholy Aura				(skill 2)
 
@@ -976,7 +977,7 @@ new Float:p_unholy_dod[MAX_SKILL_LEVEL] =				{10.0, 20.0, 30.0, 40.0, 50.0, 60.0
 
 new const Float:p_levitation[MAX_SKILL_LEVEL] =			{0.8, 0.7, 0.6, 0.5, 0.45, 0.4, 0.35}						// Levitation				(skill 3)
 
-new const p_invisibility[MAX_SKILL_LEVEL] =				{200, 190, 180, 170, 160, 150, 135}							// Invisibility				(skill 1)
+new const p_invisibility[MAX_SKILL_LEVEL] =				{200, 195, 190, 185, 180, 175, 170}							// Invisibility				(skill 1)
 new const p_devotion[MAX_SKILL_LEVEL] =					{10, 15, 20, 25, 30, 35, 45}								// Devotion Aura			(skill 2)
 new const Float:p_bash[MAX_SKILL_LEVEL] =				{0.09, 0.10, 0.11, 0.12, 0.13, 0.14, 0.15} 					// Bash						(skill 3)
 
@@ -996,10 +997,10 @@ new const Float:p_resistant[MAX_LEVELS+1] =				{0.05, 0.05, 0.05, 0.05, 0.05, 0.
 														 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
 														 0.05, 0.05, 0.05, 0.05, 0.05, 0.05}						// Resistant Skin		(Skill 4)
 
-new const Float:p_heal[MAX_SKILL_LEVEL] =				{2.5, 2.3, 2.0, 1.7, 1.5, 1.3, 1.0}							// Healing Wave				(skill 1)
+new const Float:p_heal[MAX_SKILL_LEVEL] =				{3.0, 2.5, 1.9, 1.4, 1.0, 0.7, 0.5}							// Healing Wave				(skill 1)
 new const Float:p_hex[MAX_SKILL_LEVEL] =				{0.09, 0.10, 0.11, 0.12, 0.13, 0.14, 0.15}					// Hex						(skill 2)
-new const p_serpent[MAX_SKILL_LEVEL] =					{3, 3, 3, 3, 3, 3, 3}										// Serpent Ward	Count		(skill 3)
-new const p_serpent_damage[MAX_SKILL_LEVEL] =			{1, 3, 5, 7, 9, 11, 13}										// Serpent Ward	Damage		(skill 3)						
+new const p_serpent[MAX_SKILL_LEVEL] =					{1, 2, 3, 4, 5, 6, 7}										// Serpent Ward	Count		(skill 3)
+new const p_serpent_damage[MAX_SKILL_LEVEL] =			{11, 10, 9, 8, 7, 6, 5}										// Serpent Ward	Damage		(skill 3)						
 
 
 new const Float:p_concoction[MAX_LEVELS+1] =			{0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 
@@ -1019,6 +1020,19 @@ new const Float:p_carrion[MAX_SKILL_LEVEL] =			{0.09, 0.10, 0.11, 0.12, 0.13, 0.
 new const Float:p_orb[MAX_LEVELS+1] =					{0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 
 														 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
 														 0.05, 0.05, 0.05, 0.05, 0.05, 0.05}						// Orb of Annihilation	(Skill 4)
+
+new const p_moneywave_damage[MAX_SKILL_LEVEL] =			{10, 15, 20, 25, 30, 35, 40}								// Money Wave 					(skill 1)
+new const Float:p_medical_armor[MAX_SKILL_LEVEL] =		{3.0, 2.5, 1.9, 1.4, 1.0, 0.7, 0.5}							// Medical Armor Wave				(skill 2)	
+new const p_cleave_armor[MAX_SKILL_LEVEL] =				{1, 2, 3, 4, 5, 6, 7}										// Cleave Armor 		(skill 3)
+
+new const p_darkflight[MAX_SKILL_LEVEL] =				{2, 3, 4, 5, 6, 7, 8}										// Jumps 		(skill 1)
+new const Float:p_skinchanger[MAX_SKILL_LEVEL] =		{0.400, 0.500, 0.600, 0.700, 0.800, 0.900, 1.0}				// Skin	        (skill 2)
+new const p_bloodhunt[MAX_SKILL_LEVEL] =				{15, 20, 25, 30, 35, 40, 45}								// Blood Hunt	(skill 3)
+
+new jumpnum[33] = 0
+new bool:dojump[33] = false
+
+
 
 
 
@@ -1158,28 +1172,30 @@ new bChooseTeamOverrideActive[33];
 #define DESIGN13_STYLE "<meta charset=UTF-8><style>body{background:#220000;font-family:Tahoma}th{background:#3E0909;color:#FFF;padding:5px 2px;text-align:left;border-bottom:1px solid #DEDEDE}td{padding:2px 2px;}table{background:#FFF;font-size:11px;border:1px solid #791616}h2,h3{color:#FFF}#c{background:#F4F4F4;color:#7B0000}img{height:7px;background:#a00000;margin:0 3px}#r{height:7px;background:#181818}#clr{background:none;color:#CFCFCF;font-size:20px;border:0}</style>"
 #define DEFAULT_STYLE "<meta charset=UTF-8><style>body{background:#000}tr{text-align:left}table{font-size:13px;color:#FFB000;padding:2px}h2,h3{color:#FFF;font-family:Verdana}img{height:5px;background:#0000FF;margin:0 3px}#r{height:5px;background:#FF0000}</style>"
 
-#define MAX_HELP	18
+#define MAX_HELP	20
 
 new Lang_TutorialDatabase[][][] =
 {
-	{"Race",						"Each race has separate race level and different powers"										},	
-	{"Race Level",					"Each race level, upgrade the race powers level"												},	
-	{"Race Experience",				"Earn XP (win, kill, plant, defuse) to increase the race level"									},
+	{"Race",						"Each race has 3 skills and 1 ultimate ( F )"													},	
+	{"Race Level",					"Each race has individual xp and level, each level upgrade the skills and ultimate"				},	
+	{"Race Experience",				"Earn XP (win, kill, plant, defuse etc) to levelup"												},
 	{" ",							" "																								},
 	{" ",							" "																								},	
-	{"Race Skills",					"Auto active by chance percent, each skill level increase the chance" 							},
-	{"Race Ultimate",				"MANUAL PRESS F (type in console bind f ultimate), each level decrease ultimate cooldown"		},	
-	{"Race Passive",				"Auto active by chance percent, each race level increase the chance"							},	
+	{"Race Skills",					"Auto activation by luck chance percent, each level increase the chance" 						},
+	{"Race Ultimate",				"Manual activation on F (type in console bind f ultimate), each level reduce cooldown"			},	
+	{" ",							" "																								},	
 	{" ",							" "																								},
-	{"/war3menu",					"Server game menu"																				},
-	{"/changerace",					"Select other race with different powers"														},	
-	{"/resetskills",				"Reselect your race skills again, you can choose the upgrades again"							},	
-	{"/ability",					"(Race Shaman Wards) MANUAL PRESS V (type in console bind v ability)"							},	
-	{"/shopmenu",					"Buy powers with money"																			},			
+	{"/race",						"Select another race with different skills and ultimate"										},	
+	{"/raceinfo",					"Current race skills and ultimate information"													},
+	{"/racereset",					"Current race reselect skills and ultimate again"												},	
 	{" ",							" "																								},
 	{" ",							" "																								},
-	{"Developer ?",					"xReforged"																						},	
-	{"Questions ?",					"Visit DAEVA.RO"																				}	
+	{"/shop",						"Money $ can buy items with extra powers"														},			
+	{"/menu",						"Menu with more extra options"																	},
+	{" ",							" "																								},
+	{" ",							" "																								},
+	{"Developer ?",					"danielvoicu136@gmail.com"																		},	
+	{"Questions ?",					"visite daeva.ro"																				}	
 					
 }
 
@@ -1188,4 +1204,51 @@ new Lang_TutorialDatabase[][][] =
 
 new iUserSpawnNumber[33];
 new bool:bUserHasAutoRace[33]; 
+
+// Define the maximum number of rounds you want to handle bonuses for
+#define MAX_BONUS_ROUNDS 10
+
+// Define a multidimensional array with the round numbers and their corresponding bonuses
+new const g_roundBonuses[MAX_BONUS_ROUNDS][2] = {
+    {5, 100},
+    {10, 200},
+    {15, 300},
+    {20, 400},
+    {25, 500},
+	{30, 600},
+	{35, 700},
+	{40, 800},
+	{45, 900},
+	{50, 1000}
+	
+};
+
+// Array to keep track of each player's spawn count
+new g_playerSpawns[33];
+
+
+new szInvisKnife[128];
+
+new bool:g_bCamera[33];
+
+#define RACE_ACTIVE_BOTS 8 
+
+
+#define RACE_ACTIVE_PLAYERS 10 
+
+
+
+// Data Settings 
+
+new PlayerBankXP[33];
+new DataFile[128];	
+
+
+// Auto Buy Items 
+
+#define MAX_PDATA 3
+#define PDATA_ITEM1 1
+#define PDATA_ITEM2 2
+new p_autobuy[33][MAX_PDATA];
+new bool:pb_slotchanger[33]; 
 

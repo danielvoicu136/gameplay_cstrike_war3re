@@ -14,22 +14,22 @@ public SentSoundBuyFail(id)
 ITEM_Init()
 {
 	ITEM_COST[ITEM_ANKH]	    = 1500;			// Ankh of Reincarnation
-	ITEM_COST[ITEM_BOOTS]       = 2500;			// Boots of Speed
-	ITEM_COST[ITEM_CLAWS]	    = 2500;			// Claws of Attack
-	ITEM_COST[ITEM_CLOAK]	    = 2500;			// Cloak of Shadows
-	ITEM_COST[ITEM_MASK]	    = 3500;			// Mask of Death
+	ITEM_COST[ITEM_BOOTS]       = 1500;			// Boots of Speed
+	ITEM_COST[ITEM_CLAWS]	    = 1500;			// Claws of Attack
+	ITEM_COST[ITEM_CLOAK]	    = 1000;			// Cloak of Shadows
+	ITEM_COST[ITEM_MASK]	    = 2500;			// Mask of Death
 	ITEM_COST[ITEM_NECKLACE]	= 1000;			// Necklace of Immunity
-	ITEM_COST[ITEM_FROST]	    = 2000;			// Orb of Frost
-	ITEM_COST[ITEM_HEALTH]	    = 2500;			// Periapt of Health
+	ITEM_COST[ITEM_FROST]	    = 1000;			// Orb of Frost
+	ITEM_COST[ITEM_HEALTH]	    = 1500;			// Periapt of Health
 	ITEM_COST[ITEM_TOME]	    = 5000;			// Tome of Experience
 	ITEM_COST[ITEM_SCROLL]	    = 5000;			// Scroll of Respawning
-	ITEM_COST[ITEM_PROTECTANT]	= 1500;			// Mole Protectant
-	ITEM_COST[ITEM_HELM]	    = 3500;			// Helm of Excellence
+	ITEM_COST[ITEM_PROTECTANT]	= 1000;			// Mole Protectant
+	ITEM_COST[ITEM_HELM]	    = 2500;			// Helm of Excellence
 	ITEM_COST[ITEM_AMULET]	    = 1500;			// Amulet of the Cat
 	ITEM_COST[ITEM_SOCK]	    = 1500;			// Sock of the Feather
 	ITEM_COST[ITEM_GLOVES]	    = 2000;			// Flaming Gloves of Warmth
-	ITEM_COST[ITEM_RING]	    = 500;			// Ring of Regeneration + 1
-	ITEM_COST[ITEM_CHAMELEON]	= 3500;			// Chameleon
+	ITEM_COST[ITEM_RING]	    = 300;			// Ring of Regeneration + 1
+	ITEM_COST[ITEM_CHAMELEON]	= 2500;			// Chameleon
 	ITEM_COST[ITEM_MOLE]	    = 10000;		// Mole
 
 	// Item costs are a little different for DOD
@@ -276,7 +276,7 @@ ITEM_GiveItem( id, iItem )
 
 		// Play purchase sound
 		//emit_sound( id, CHAN_STATIC, g_szSounds[SOUND_PICKUPITEM], 1.0, ATTN_NORM, 0, PITCH_NORM );
-		emit_sound( id, CHAN_STATIC, g_szSounds[SOUND_ITEM_BUY], 1.0, ATTN_NORM, 0, PITCH_NORM );
+		//emit_sound( id, CHAN_STATIC, g_szSounds[SOUND_ITEM_BUY], 1.0, ATTN_NORM, 0, PITCH_NORM );
 	}
 
 	WC3_ShowBar( id );
@@ -510,6 +510,13 @@ ITEM_GiveBonuses( id, iItem )
 		{
 			g_bPlayerBoughtMole[id] = true;
 		}
+		
+		case ITEM_PROTECTANT:
+		{
+			ITEM_EnableProtectant(id);
+		}
+		
+		
 	}
 }
 
@@ -641,6 +648,11 @@ ITEM_Remove( id, iItemSlot, bResetAnkhMole = true )
 			{
 				g_bPlayerBoughtMole[id] = false;
 			}
+		}
+		
+		case ITEM_PROTECTANT:
+		{
+			ITEM_DisableProtectant(id);
 		}
 	}
 
@@ -1141,4 +1153,82 @@ ITEM_HasItem( idUser, iItem )
 		return iItem;
 
 	return ITEM_NONE;
+}
+
+
+public ITEM_EnableProtectant(id)
+{
+	if(task_exists(id + TASK_PROTECTANT))
+		remove_task(id + TASK_PROTECTANT);
+
+	iProtectant[id] = true;
+	
+	set_task(FREQUENCY_PROTECTANT, "Check_Protectant", id + TASK_PROTECTANT, _, _, "b");
+	
+}
+
+public ITEM_DisableProtectant(id)
+{
+	iProtectant[id] = false;
+
+	if(task_exists(id + TASK_PROTECTANT))
+		remove_task(id + TASK_PROTECTANT);
+}
+
+public Check_Protectant(id)
+{	
+	if (id >= TASK_PROTECTANT )
+			id -= TASK_PROTECTANT;
+
+	if(!is_user_connected(id) || !is_user_alive(id) || !iProtectant[id]) 
+	{
+		if(task_exists(id + TASK_PROTECTANT))
+			remove_task(id + TASK_PROTECTANT);
+
+		return PLUGIN_CONTINUE;
+	}
+	
+	new iPlayers[32], iNum;
+	get_players(iPlayers, iNum, "a");
+	
+	for(new i = 0; i < iNum; ++i)
+	{
+		new iVictim = iPlayers[i];
+		new iTeamAttacker = get_user_team(id);
+		new iTeamVictim = get_user_team(iVictim);
+
+		if(iTeamAttacker == iTeamVictim || id == iVictim) 
+			continue;
+
+		if( SM_GetSkillLevel( iVictim, SKILL_INVISIBILITY ) > 0 || ITEM_Has(iVictim, ITEM_CLOAK ) > ITEM_NONE || p_data_b[iVictim][PB_SKINSWITCHED] )
+		{
+		
+			new iOrigin[3];
+			get_user_origin(iVictim, iOrigin, 0);
+				
+			message_begin(MSG_ONE, SVC_TEMPENTITY, iOrigin, id);
+			write_byte(21);
+			write_coord(iOrigin[0]);
+			write_coord(iOrigin[1]);
+			write_coord(iOrigin[2] - 20);
+			write_coord(iOrigin[0]);
+			write_coord(iOrigin[1]);
+			write_coord(iOrigin[2] + RADIUS_PROTECTANT);
+			write_short(g_iSprites[SPR_TRAIL]);
+			write_byte(0);
+			write_byte(1);
+			write_byte(6); 
+			write_byte(8);
+			write_byte(1);
+			write_byte(100);
+			write_byte(255);
+			write_byte(100);
+			write_byte(192);
+			write_byte(0);
+			message_end();
+		
+		}
+	}
+
+	return PLUGIN_CONTINUE;
 }

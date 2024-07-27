@@ -25,7 +25,10 @@ stock get_user_maxhealth( id )
 stock is_user_vip(id)
 {
    
-   if(get_user_flags(id) & VIP_LEVEL) return true
+   if((get_user_flags(id) & VIP_LEVEL) || is_user_admin(id))
+   {
+		return true
+   }
    else return false
    
    return PLUGIN_CONTINUE
@@ -59,10 +62,10 @@ stock SHARED_IsSecondaryWeapon( iWeaponID )
 stock auto_buy_tome( id )
 {
 	new minMoney = 10000;
-	new tomePrice = ITEM_COST[ITEM_TOME];
+	new tomePrice = ITEM_Cost( id, ITEM_TOME );
 	new totalCost = tomePrice + minMoney;
 	
-	if(SHARED_GetUserMoney( id ) >= totalCost) 
+	if(SHARED_GetUserMoney( id ) >= totalCost && p_data[id][P_LEVEL] < MAX_LEVELS) 
 	{
 		if (ITEM_MenuCanBuyCheck(id)) ITEM_Buy( id, ITEM_TOME );
 	}

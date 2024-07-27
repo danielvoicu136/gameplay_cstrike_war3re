@@ -139,7 +139,8 @@ public cmd_Ultimate(id)
 			// User has already had their warning - kill them!
 			if ( p_data_b[id][PB_SUICIDEATTEMPT] )
 			{
-				WC3_KillUser( id, 0, 0 );
+				// WC3_KillUser( id, 0, 0 );
+				UD_Suicide(id);
 			
 				p_data_b[id][PB_SUICIDEATTEMPT] = false
 			}
@@ -212,6 +213,21 @@ public cmd_Ultimate(id)
 				_ULT_Ping( parm );
 			}
 		}
+		
+		// WORGEN - Swap
+		case ULTIMATE_WORGENFRENZY:
+		{
+			p_data_b[id][PB_ISSEARCHING] = true;
+
+			// Don't continue if task already exists...
+			if ( !task_exists( TASK_ULTPING + id ) )
+			{
+				new parm[2];
+				parm[0] = id;
+				parm[1] = 5;
+				_ULT_Ping( parm );
+			}
+		}
 
 		// SHADOW HUNTER - Big Bad Voodoo
 		case ULTIMATE_BIGBADVOODOO:
@@ -223,6 +239,12 @@ public cmd_Ultimate(id)
 		case ULTIMATE_VENGEANCE:
 		{
 			WA_ULT_Vengeance( id );
+		}
+		
+		// DRAENEI - Light Wraith
+		case ULTIMATE_LIGHTWRATH:
+		{
+			DR_ULT_LightWrath( id );
 		}
 
 		// CRYPT LORD - Locust Swarm
@@ -273,13 +295,13 @@ public cmd_Say( id )
 CMD_Handle( id, szCmd[], bool:bThroughSay )
 {
 	// Change the user's race
-	if ( CMD_Equal( id,  szCmd, "changerace" ) || CMD_Equal( id,  szCmd, "selectrace" ) || CMD_Equal( id,  szCmd, "race" ) || CMD_Equal( id,  szCmd, "hero" )|| CMD_Equal( id,  szCmd, "changehero" ) || CMD_Equal( id,  szCmd, "selecthero" ))
+	if ( CMD_Equal( id,  szCmd, "changerace" ) || CMD_Equal( id,  szCmd, "class" ) || CMD_Equal( id,  szCmd, "selectrace" ) || CMD_Equal( id,  szCmd, "race" ) || CMD_Equal( id,  szCmd, "hero" )|| CMD_Equal( id,  szCmd, "changehero" ) || CMD_Equal( id,  szCmd, "selecthero" ))
 	{
 		WC3_ChangeRaceStart( id );
 	}
 	
 	// Display select skill menu
-	else if ( CMD_Equal( id,  szCmd, "selectskills" ) || CMD_Equal( id,  szCmd, "selectskill" ) )
+	else if ( CMD_Equal( id,  szCmd, "selectskills" ) || CMD_Equal( id,  szCmd, "selectskill" ) || CMD_Equal( id,  szCmd, "skill" ) || CMD_Equal( id,  szCmd, "skills" ) || CMD_Equal( id,  szCmd, "select" ) )
 	{
 		MENU_SelectSkill( id );
 	}
@@ -299,13 +321,13 @@ CMD_Handle( id, szCmd[], bool:bThroughSay )
 		client_print( id, print_chat, "Move Speed: %0.0f", get_user_maxspeed( id ) );
 	}
 
-	else if ( CMD_Equal( id,  szCmd, "skillsinfo" ) || CMD_Equal( id,  szCmd, "skillinfo" ) || CMD_Equal( id,  szCmd, "ultimateinfo" ) || CMD_Equal( id,  szCmd, "raceinfo" ) || CMD_Equal( id,  szCmd, "ultiinfo" ))
+	else if ( CMD_Equal( id,  szCmd, "skillsinfo" ) || CMD_Equal( id,  szCmd, "racehelp" ) || CMD_Equal( id,  szCmd, "skillinfo" ) || CMD_Equal( id,  szCmd, "ultimateinfo" ) || CMD_Equal( id,  szCmd, "raceinfo" ) || CMD_Equal( id,  szCmd, "ultiinfo" ))
 	{
 		//MOTD_SkillsInfo( id );
 		MOTD_RaceInfo( id );
 	}
 
-	else if ( CMD_Equal( id,  szCmd, "war3help" ) || CMD_Equal( id,  szCmd, "help" ) || CMD_Equal( id,  szCmd, "info" ))
+	else if ( CMD_Equal( id,  szCmd, "war3help" ) || CMD_Equal( id,  szCmd, "help" ) || CMD_Equal( id,  szCmd, "info" ) )
 	{
 		//MOTD_War3help(id)
 		MOTD_TutorialInfo( id );
@@ -385,10 +407,13 @@ CMD_Handle( id, szCmd[], bool:bThroughSay )
 		WC3_ShowBar( id );
 	}
 
-	else if ( CMD_Equal( id,  szCmd, "shopmenu" ) || CMD_Equal( id,  szCmd, "shop" )  )
+	else if ( CMD_Equal( id,  szCmd, "shop" )  )
 	{
-		//MENU_Shopmenu( id, 0 );
 		MENU_Shop( id );
+	}
+	
+	else if ( CMD_Equal( id,  szCmd, "shopmenu" )) { 
+		MENU_Shopmenu( id, 0 );
 	}
 
 	else if ( CMD_Equal( id,  szCmd, "resetxp" ) )
@@ -401,7 +426,7 @@ CMD_Handle( id, szCmd[], bool:bThroughSay )
 		//MOTD_ItemsInfo( id, 0 )
 		MENU_Shop( id );
 	}
-	else if ( CMD_Equal( id,  szCmd, "war3menu" ) || CMD_Equal( id,  szCmd, "menu" ) || CMD_Equal( id,  szCmd, "war3" ) || CMD_Equal( id,  szCmd, "server" ) || CMD_Equal( id,  szCmd, "servermenu" )    )
+	else if ( CMD_Equal( id,  szCmd, "war3menu" ) || CMD_Equal( id,  szCmd, "comenzi" ) || CMD_Equal( id,  szCmd, "menu" ) || CMD_Equal( id,  szCmd, "war3" ) || CMD_Equal( id,  szCmd, "server" ) || CMD_Equal( id,  szCmd, "servermenu" )    )
 	{
 		//MENU_War3Menu( id );
 		MENU_GameMainMenu( id );
@@ -411,7 +436,7 @@ CMD_Handle( id, szCmd[], bool:bThroughSay )
        client_print( id, print_chat, "%s XP is saved automatically, you do not need to type this command", g_MODclient );
 	}
 
-	else if ( CMD_Equal( id,  szCmd, "resetskills" ) )
+	else if ( CMD_Equal( id,  szCmd, "resetskills" ) || CMD_Equal( id,  szCmd, "reset" ) || CMD_Equal( id,  szCmd, "resetrace" ) || CMD_Equal( id,  szCmd, "racereset" ))
 	{
 		// Special message for csdm
 		if ( CVAR_csdm_active > 0 && get_pcvar_num( CVAR_csdm_active ) == 1 )
@@ -464,7 +489,7 @@ CMD_Handle( id, szCmd[], bool:bThroughSay )
 	}
 	
 	// Ability to buy items through console commands
-	else if ( CMD_Equal( id, szCmd, "ankh" ) || CMD_Equal( id,  szCmd, "guns" ) || CMD_Equal( id,  szCmd, "saveguns" ) )
+	else if ( CMD_Equal( id,  szCmd, "savegun" ) || CMD_Equal( id,  szCmd, "save" ) || CMD_Equal( id,  szCmd, "gun" ) || CMD_Equal( id, szCmd, "ankh" ) || CMD_Equal( id,  szCmd, "guns" ) || CMD_Equal( id,  szCmd, "saveguns" ) )
 	{
 		if ( ITEM_MenuCanBuyCheck(id) )ITEM_Buy( id, ITEM_ANKH );
 	}
@@ -499,12 +524,12 @@ CMD_Handle( id, szCmd[], bool:bThroughSay )
 		if (ITEM_MenuCanBuyCheck(id)) ITEM_Buy( id, ITEM_FROST );
 	}
 
-	else if ( CMD_Equal( id, szCmd, "health" ) || CMD_Equal( id,  szCmd, "vitality" ) || CMD_Equal( id,  szCmd, "life" ) )
+	else if ( CMD_Equal( id, szCmd, "hp" ) || CMD_Equal( id, szCmd, "health" ) || CMD_Equal( id,  szCmd, "vitality" ) || CMD_Equal( id,  szCmd, "life" ) )
 	{
 		if (ITEM_MenuCanBuyCheck(id)) ITEM_Buy( id, ITEM_HEALTH );
 	}
 
-	else if ( CMD_Equal( id, szCmd, "tome" ) || CMD_Equal( id,  szCmd, "exp" ) || CMD_Equal( id,  szCmd, "experience" ) || CMD_Equal( id,  szCmd, "buyxp" )|| CMD_Equal( id,  szCmd, "buyexp" ))
+	else if ( CMD_Equal( id, szCmd, "tome" ) || CMD_Equal( id,  szCmd, "exp" ) || CMD_Equal( id,  szCmd, "xp" ) || CMD_Equal( id,  szCmd, "experience" )  || CMD_Equal( id,  szCmd, "buyxp" )|| CMD_Equal( id,  szCmd, "buyexp" ))
 	{
 		if (ITEM_MenuCanBuyCheck(id)) ITEM_Buy( id, ITEM_TOME );
 	}
@@ -517,7 +542,7 @@ CMD_Handle( id, szCmd[], bool:bThroughSay )
 			// MOTD_ItemsInfo( id, 9 );
 			MENU_Shop( id );
 		}
-		else if ( CMD_Equal( id, szCmd, "scroll" ) || CMD_Equal( id,  szCmd, "respawn" ) || CMD_Equal( id,  szCmd, "revive" ) )
+		else if ( CMD_Equal( id, szCmd, "scroll" ) || CMD_Equal( id,  szCmd, "res" ) ||CMD_Equal( id,  szCmd, "rez" ) || CMD_Equal( id,  szCmd, "respawn" ) || CMD_Equal( id,  szCmd, "revive" ) )
 		{
 			if (ITEM_MenuCanBuyCheck(id)) ITEM_Buy( id, ITEM_SCROLL );
 		}
@@ -527,17 +552,17 @@ CMD_Handle( id, szCmd[], bool:bThroughSay )
 			if (ITEM_MenuCanBuyCheck(id)) ITEM_Buy( id, ITEM_HELM );
 		}
 
-		else if ( CMD_Equal( id, szCmd, "amulet" ) || CMD_Equal( id,  szCmd, "silent" ) || CMD_Equal( id,  szCmd, "silence" ) )
+		else if ( CMD_Equal( id, szCmd, "amulet" ) || CMD_Equal( id,  szCmd, "silent" ) || CMD_Equal( id,  szCmd, "steps" ) || CMD_Equal( id,  szCmd, "step" )|| CMD_Equal( id,  szCmd, "sound" )|| CMD_Equal( id,  szCmd, "silence" ) )
 		{
 			if (ITEM_MenuCanBuyCheck(id)) ITEM_Buy( id, ITEM_AMULET );
 		}
 
-		else if ( CMD_Equal( id, szCmd, "socks" ) || CMD_Equal( id,  szCmd, "gravity" ) || CMD_Equal( id,  szCmd, "sock" ))
+		else if ( CMD_Equal( id, szCmd, "socks" ) || CMD_Equal( id,  szCmd, "jump" )|| CMD_Equal( id,  szCmd, "jumps" )|| CMD_Equal( id,  szCmd, "gravity" ) || CMD_Equal( id,  szCmd, "sock" ))
 		{
 			if (ITEM_MenuCanBuyCheck(id)) ITEM_Buy( id, ITEM_SOCK );
 		}
 
-		else if ( CMD_Equal( id, szCmd, "gloves" ) || CMD_Equal( id,  szCmd, "grenade" ) || CMD_Equal( id,  szCmd, "glove" ) )
+		else if ( CMD_Equal( id, szCmd, "gloves" ) || CMD_Equal( id,  szCmd, "hegrenade" )|| CMD_Equal( id,  szCmd, "nade" ) || CMD_Equal( id,  szCmd, "hegren" ) || CMD_Equal( id,  szCmd, "he" )|| CMD_Equal( id,  szCmd, "grenade" ) || CMD_Equal( id,  szCmd, "glove" ) )
 		{
 			if (ITEM_MenuCanBuyCheck(id)) ITEM_Buy( id, ITEM_GLOVES );
 		}
@@ -547,12 +572,18 @@ CMD_Handle( id, szCmd[], bool:bThroughSay )
 			if ( ITEM_MenuCanBuyCheck( id ) ) ITEM_BuyRings( id );
 		}
 
-		else if ( CMD_Equal( id, szCmd, "chameleon" ) || CMD_Equal( id,  szCmd, "skin" ) )
+		else if ( CMD_Equal( id, szCmd, "chame" ) || CMD_Equal( id, szCmd, "chameleon" ) || CMD_Equal( id,  szCmd, "skin" ) )
 		{
 			if (ITEM_MenuCanBuyCheck(id)) ITEM_Buy( id, ITEM_CHAMELEON );
 		}
+		
+		else if ( CMD_Equal( id, szCmd, "cam" ) || CMD_Equal( id, szCmd, "camera" ) || CMD_Equal( id,  szCmd, "cham" ) )
+		{
+			SWITCH_Camera(id);
+		}
 
-		else if ( CMD_Equal( id, szCmd, "guard" ) || CMD_Equal( id,  szCmd, "protectant" ) || CMD_Equal( id,  szCmd, "scan" ) || CMD_Equal( id,  szCmd, "scanner" )  )
+
+		else if ( CMD_Equal( id, szCmd, "guard" ) || CMD_Equal( id,  szCmd, "finder" ) || CMD_Equal( id,  szCmd, "detection" ) || CMD_Equal( id,  szCmd, "gem" ) || CMD_Equal( id,  szCmd, "protectant" ) || CMD_Equal( id,  szCmd, "scaner" ) || CMD_Equal( id,  szCmd, "scan" ) || CMD_Equal( id,  szCmd, "scanner" )  )
 		{
 			if (ITEM_MenuCanBuyCheck(id)) ITEM_Buy( id, ITEM_PROTECTANT );
 		}
@@ -567,10 +598,13 @@ CMD_Handle( id, szCmd[], bool:bThroughSay )
 			SH_PlaceSerpentWard( id );
 		}
 
-		else if ( CMD_Equal( id,  szCmd, "shopmenu2" ) || CMD_Equal( id,  szCmd, "shop2" )  )
+		else if ( CMD_Equal( id,  szCmd, "shop2" )  )
 		{
-			//MENU_Shopmenu( id, 9 );
 			MENU_Shop( id );
+		}
+		else if ( CMD_Equal( id,  szCmd, "shopmenu2" )) {
+		
+			MENU_Shopmenu( id, 9 );
 		}
 
 	}

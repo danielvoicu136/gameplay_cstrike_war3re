@@ -35,7 +35,8 @@ public MENU_GameMainMenu(id)
 	if(is_user_connected(id)) 
 	{
 		new Title[256];
-		formatex(Title,sizeof(Title)-1,"\yWarcraft 3 Reforged \d(2024) \y");
+		//formatex(Title,sizeof(Title)-1,"\yWarcraft 3 Frozen Throne \d(2024) \y");
+		formatex(Title,sizeof(Title)-1,"\yWarcraft 3 Frozen Throne \y");
 		
 		Menu = menu_create(Title, "_MENU_GameMainMenu");
 		
@@ -56,7 +57,7 @@ public MENU_GameMainMenu(id)
 		menu_additem(Menu, szItem4, "4", 0); 
 
 		new szItem5[256];
-		formatex(szItem5,sizeof(szItem5)-1,"Skills \yInfo");
+		formatex(szItem5,sizeof(szItem5)-1,"Race \yInfo");
 		menu_additem(Menu, szItem5, "5", 0); 
 
 		new szItem6[256];
@@ -70,14 +71,51 @@ public MENU_GameMainMenu(id)
 		new szItem8[256];
 		formatex(szItem8,sizeof(szItem8)-1,"Help \yInfo");
 		menu_additem(Menu, szItem8, "8", 0); 
+		
+		new szItem10[256];
+		formatex(szItem10,sizeof(szItem10)-1,"\dAdmin Only^n");
+		menu_additem(Menu, szItem10, "9", 0);
+		
+		
 
 		new szItem9[256];
-		formatex(szItem9,sizeof(szItem9)-1,"Admin \yInfo^n");
-		menu_additem(Menu, szItem9, "9", 0); 
+		formatex(szItem9,sizeof(szItem9)-1,"%s",g_bCamera[id] ? "Camera : \rPerspective" : "Camera : \yNormal");
+		menu_additem(Menu, szItem9, "10", 0); 
+	
+		new szItem11[256];
+		formatex(szItem11,sizeof(szItem11)-1,"Self GiveXP :\y %d XP^n", get_user_bankxp(id));
+		menu_additem(Menu, szItem11, "11", 0); 
+		
+		
+		new szItemName1[64]
+		if(p_autobuy[id][PDATA_ITEM1] >= 0 && p_autobuy[id][PDATA_ITEM1] < MAX_SHOPMENU_ITEMS) 
+		{
+			LANG_GetItemName(p_autobuy[id][PDATA_ITEM1], id, szItemName1, 63);
+		}
+		else 
+		{
+			formatex(szItemName1, sizeof(szItemName1) - 1, "\rNone");
+		}
 
-		new szItem10[256];
-		formatex(szItem10,sizeof(szItem10)-1,"\rAdmin Only");
-		menu_additem(Menu, szItem10, "10", 0); 
+		new szItem12[256];
+		formatex(szItem12,sizeof(szItem12)-1,"Autobuy Item 1 : %s",szItemName1);
+		menu_additem(Menu, szItem12, "12", 0); 
+		
+		
+		new szItemName2[64]
+		if(p_autobuy[id][PDATA_ITEM2] >= 0 && p_autobuy[id][PDATA_ITEM2] < MAX_SHOPMENU_ITEMS) 
+		{
+			LANG_GetItemName(p_autobuy[id][PDATA_ITEM2], id, szItemName2, 63);
+		}
+		else 
+		{
+			formatex(szItemName2, sizeof(szItemName2) - 1, "\rNone");
+		}
+
+		new szItem13[256];
+		formatex(szItem13,sizeof(szItem13)-1,"Autobuy Item 2 : %s",szItemName2);
+		menu_additem(Menu, szItem13, "13", 0); 
+		
 
 		
 	/*	
@@ -163,14 +201,35 @@ public _MENU_GameMainMenu(id, menu, item)
 		
 		case 9: 
 		{
-			//MOTD_AdminInfo( id );
-			client_print( id, print_chat, "%s Admin Info is in work ...", g_MODclient );
+			menu_Admin_Options( id );
 		}
 
 		case 10: 
 		{
-			menu_Admin_Options( id );
+			
+			SWITCH_Camera( id );
 		}
+		
+		case 11: 
+		{	
+			Self_GiveXP( id );
+			SentSoundSelect(id);
+		}
+		
+		case 12: 
+		{	
+			pb_slotchanger[id] = true;
+			MENU_AutoBuyItem(id)
+		}
+		
+		
+		case 13: 
+		{	
+			pb_slotchanger[id] = false;
+			MENU_AutoBuyItem(id)
+		}
+		
+		
 
 		default: return PLUGIN_HANDLED;
 		
@@ -1040,6 +1099,10 @@ public MENU_ChangeRace( id, iRaceXP[MAX_RACES],iRaceLVL[MAX_RACES], pos )
 	
 	for(a = start; a < end; ++a)
 	{
+		if(a % 8 == 4) { 
+			len += formatex(racemenu[len], 65535 - len, "^n");
+		}
+		
 		num_to_str( iRaceXP[a], szEXP, 255 );
 		formatex(szLVL, charsmax(szLVL), "%d",iRaceLVL[a]); 
 		
@@ -1050,7 +1113,7 @@ public MENU_ChangeRace( id, iRaceXP[MAX_RACES],iRaceLVL[MAX_RACES], pos )
 		{
 			keys |= (1<<b)
 			
-			len += formatex(racemenu[len], 65535 - len, "\y%d. \d%s \R%s               \R%s^n", ++b, szRaceName, szEXP, szLVL);
+			len += formatex(racemenu[len], 65535 - len, "\y%d. \y%s \R%s               \R%s^n", ++b, szRaceName, szEXP, szLVL);
 		
 		}
 		
@@ -1059,10 +1122,19 @@ public MENU_ChangeRace( id, iRaceXP[MAX_RACES],iRaceLVL[MAX_RACES], pos )
 		{
 			keys |= (1<<b)
 			
-			len += formatex(racemenu[len], 65535 - len, "\y%d. %s \R%s               \R%s^n", ++b, szRaceName, szEXP, szLVL);
+			len += formatex(racemenu[len], 65535 - len, "\y%d. \r%s \R%s               \R%s^n", ++b, szRaceName, szEXP, szLVL);
 		
 		}
 		
+		// In work race 
+		else if ( a > RACE_ACTIVE_PLAYERS - 1 )
+		{
+			keys |= (1<<b)
+			
+			len += formatex(racemenu[len], 65535 - len, "\d%d. %s \R%s               \R%s^n", ++b, szRaceName, szEXP, szLVL);
+		
+		}
+
 		// All other cases
 		else
 		{
@@ -1083,11 +1155,15 @@ public MENU_ChangeRace( id, iRaceXP[MAX_RACES],iRaceLVL[MAX_RACES], pos )
 				len += formatex(racemenu[len], 65535 - len, "\y%d. \d%s \R%s               \R%s^n", ++b, szRaceName, szEXP, szLVL);
 			}
 		}
+		
+		
+		
+		
 	}
 	
 	if(end != maxitem) 
 	{
-		formatex(racemenu[len], 65535 - len, "^n\y9.\w Next^n\y0.\w %s", pos ? "Back" : "Exit")
+		formatex(racemenu[len], 65535 - len, "^n\y9.\w More^n\y0.\w %s", pos ? "Back" : "Exit")
 		keys |= MENU_KEY_9
 	}
 	else	
@@ -1605,3 +1681,139 @@ public _MENU_SelectSkill( id, iKey )
 
 	return PLUGIN_HANDLED;
 }
+
+
+public SWITCH_Camera(id) {
+
+	if(is_user_connected(id)) 
+	{ 
+	
+		g_bCamera[id] = !g_bCamera[id];
+	
+		if(g_bCamera[id]) 
+		{
+			client_print( id, print_chat, "%s Camera is now : Perspective", g_MODclient );
+			set_view(id, CAMERA_3RDPERSON)
+			SentSoundSelect(id);
+			
+		} 
+		else 
+		{
+			client_print( id, print_chat, "%s Camera is now : Normal", g_MODclient );
+			set_view(id, CAMERA_NONE);
+			SentSoundSelect(id);
+		} 
+
+	} 
+
+}
+
+public Self_GiveXP( id ) {
+
+	if(is_user_connected(id) && p_data[id][P_LEVEL] < MAX_LEVELS && p_data[id][P_RACE] > 0 && get_user_bankxp(id) > 0) {
+
+		new iXP = get_user_bankxp(id);
+
+		p_data[id][P_XP] += iXP;
+		XP_Check( id );
+		client_print(id, print_chat, "%s Self GiveXP : You earned %d XP transferred from Self GiveXP !",g_MODclient,iXP);
+		emit_sound( id, CHAN_STATIC, "warcraft3/Tomes.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
+		set_user_bankxp(id, 0);
+
+	}
+	else {
+		
+		if(p_data[id][P_LEVEL] >= MAX_LEVELS) { 
+			client_print(id, print_chat, "%s Self GiveXP : You have max level, we will increase Self GiveXP !",g_MODclient);
+		}
+		else if(get_user_bankxp(id) <= 0) {
+			client_print(id, print_chat, "%s Self GiveXP : You need to have max level, so we can increase Self GiveXP !",g_MODclient);
+		}
+		else {
+			client_print(id, print_chat, "%s Self GiveXP : You can try again later !",g_MODclient);
+		}
+	}
+}
+
+
+
+public MENU_AutoBuyItem(id)
+{ 
+    if(is_user_connected(id)) 
+    {
+	
+		new SlotID[256]
+		formatex(SlotID, sizeof(SlotID) - 1, "%s",(pb_slotchanger[id]) ? "1" : "2")
+		
+        new Title[256];
+        formatex(Title, sizeof(Title) - 1, "\ySelect AutoBuy Item %s ^nPage:",SlotID);
+
+
+	
+        Menu = menu_create(Title, "_MENU_AutoBuyItem");
+
+        new i, szItem[256], szKey[256], szItemName[64];
+    
+        for (i = 0; i < MAX_SHOPMENU_ITEMS; i++) 
+        { 
+            LANG_GetItemName(i, id, szItemName, 63);
+            formatex(szItem, sizeof(szItem) - 1, "%s", szItemName);
+           
+            num_to_str(i + 1, szKey, 255);
+            
+            menu_additem(Menu, szItem, szKey, 0); 
+        }
+		
+		num_to_str(i + 1, szKey, 255);
+		new szItem1[256];
+		formatex(szItem1,sizeof(szItem1)-1,"AutoBuy Item %s : \rNONE", SlotID)
+		menu_additem(Menu, szItem1, szKey, 0); 
+  
+        menu_setprop(Menu, MPROP_NUMBER_COLOR, "\y"); 
+        menu_setprop(Menu, MPROP_EXIT, MEXIT_ALL);
+        menu_display(id, Menu, 0); 
+        SentSoundSelect(id);
+    }
+}
+
+public _MENU_AutoBuyItem(id, menu, item)
+{
+    if(item == MENU_EXIT) 
+    {
+        menu_destroy(menu);
+        return PLUGIN_HANDLED;
+    }
+    new Data[6], Name[64];
+    new Access, CallBack;
+    menu_item_getinfo(menu, item, Access, Data, 5, Name, 63, CallBack);
+    new Key = str_to_num(Data);
+    switch(Key)
+    {
+			case 1: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 0) : (p_autobuy[id][PDATA_ITEM2] = 0); 
+			case 2: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 1) : (p_autobuy[id][PDATA_ITEM2] = 1); 
+			case 3: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 2) : (p_autobuy[id][PDATA_ITEM2] = 2); 
+			case 4: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 3) : (p_autobuy[id][PDATA_ITEM2] = 3); 
+			case 5: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 4) : (p_autobuy[id][PDATA_ITEM2] = 4); 
+			case 6: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 5) : (p_autobuy[id][PDATA_ITEM2] = 5);
+			case 7: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 6) : (p_autobuy[id][PDATA_ITEM2] = 6); 
+			case 8: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 7) : (p_autobuy[id][PDATA_ITEM2] = 7); 
+			case 9: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 8) : (p_autobuy[id][PDATA_ITEM2] = 8); 
+			case 10: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 9) : (p_autobuy[id][PDATA_ITEM2] = 9); 
+			case 11: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 10) : (p_autobuy[id][PDATA_ITEM2] = 10); 
+			case 12: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 11) : (p_autobuy[id][PDATA_ITEM2] = 11); 
+			case 13: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 12) : (p_autobuy[id][PDATA_ITEM2] = 12);
+			case 14: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 13) : (p_autobuy[id][PDATA_ITEM2] = 13);
+			case 15: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 14) : (p_autobuy[id][PDATA_ITEM2] = 14); 
+			case 16: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 15) : (p_autobuy[id][PDATA_ITEM2] = 15); 
+			case 17: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 16) : (p_autobuy[id][PDATA_ITEM2] = 16);
+			case 18: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = 17) : (p_autobuy[id][PDATA_ITEM2] = 17);
+			case 19: (pb_slotchanger[id]) ? (p_autobuy[id][PDATA_ITEM1] = -1) : (p_autobuy[id][PDATA_ITEM2] = -1); 
+  
+        default: return PLUGIN_HANDLED;
+    }
+    
+    menu_destroy(menu);
+    return PLUGIN_HANDLED;
+}
+
+

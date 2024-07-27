@@ -80,15 +80,18 @@ new const WC3DATE[]		=	__DATE__;
 // Source Code
 #include "war3ft/cvar.inl"
 
-#include "war3ft/race_undead.inl"           // Undead Scourge   - 1
-#include "war3ft/race_human.inl"			// Human Alliance	- 2
-#include "war3ft/race_orc.inl"				// Orcish Horde		- 3
-#include "war3ft/race_elf.inl"				// Night Elf		- 4
-#include "war3ft/race_blood.inl"			// Blood Mage		- 5
-#include "war3ft/race_shadow.inl"			// Shadow Hunter	- 6
-#include "war3ft/race_warden.inl"           // Warden           - 7
-#include "war3ft/race_crypt.inl"			// Crypt Lord       - 8
-#include "war3ft/race_chameleon.inl"		// Chameleon		- 9
+#include "war3ft/race/race_undead.inl"          // Undead Scourge   - 1
+#include "war3ft/race/race_human.inl"			// Human Alliance	- 2
+#include "war3ft/race/race_orc.inl"				// Orcish Horde		- 3
+#include "war3ft/race/race_elf.inl"				// Night Elf		- 4
+#include "war3ft/race/race_blood.inl"			// Blood Mage		- 5
+#include "war3ft/race/race_shadow.inl"			// Shadow Hunter	- 6
+#include "war3ft/race/race_warden.inl"          // Warden          	- 7
+#include "war3ft/race/race_crypt.inl"			// Crypt Lord       - 8
+#include "war3ft/race/race_draenei.inl"			// Draenei 			- 9 
+#include "war3ft/race/race_worgen.inl"			// Worgen 			- 10 
+#include "war3ft/race/race_chameleon.inl"		// Chameleon		- 73 
+
 
 #include "war3ft/forwards.inl"
 #include "war3ft/effects.inl"
@@ -172,10 +175,17 @@ public plugin_init()
 	register_clcmd( "jointeam"			, "cmd_Jointeam"	, -1 );
 
 	register_clcmd( "radio1","bindOpenShop");
-	register_clcmd( "radio2","bindSetWard");
-    register_clcmd( "radio3","bindSetWard");
+	// register_clcmd( "radio2","bindSetWard");
+   // register_clcmd( "radio3","bindSetWard");
 	
 	register_forward(FM_CmdStart, "FWD_CmdStart");
+	// register_forward(FM_PlayerPreThink, "FWD_PreThink");
+	register_event("CurWeapon", "EVENT_CurWeapon2", "be", "1=1")
+	
+	// Format files 
+	new DataDir[64]
+	get_datadir(DataDir, 63)
+	format(DataFile, 127, "%s/War3FT.dat", DataDir)
 
 	register_clcmd("chooseteam", "ChooseTeam");
 
@@ -207,6 +217,7 @@ public plugin_init()
 	register_dictionary( "war3FT.txt");
 
 	RegisterHam( Ham_TakeDamage, "player", "EVENT_TakeDamage" );
+	RegisterHam(Ham_Spawn, "player", "HAM_Spawn_Post_XP", 1);
 	RegisterHam( Ham_Spawn, "player", "EVENT_Spawn", 1);
 
 	set_task(INFO_FREQ, "ShowInfoMessage", _,_,_,"b");
@@ -367,6 +378,10 @@ public plugin_precache()
 	format(szSpriteItems, charsmax(szSpriteItems), "%s","sprites/warcraft3/shop_tag.spr");
 	format(szSpriteNoItems, charsmax(szSpriteNoItems), "%s","sprites/warcraft3/bonus_daeva.spr");
 	//format(szSpriteItemWhite, charsmax(szSpriteItemWhite), "%s","sprites/warcraft3/white.spr");
+	
+	
+	format(szInvisKnife, charsmax(szInvisKnife), "%s","models/warcraft3/v_knife.mdl");
+	precache_model(szInvisKnife);
 
 	// Precache
 	engfunc(EngFunc_PrecacheModel, szModelItems);
@@ -375,8 +390,19 @@ public plugin_precache()
 	idSpriteItems = engfunc(EngFunc_PrecacheModel,szSpriteItems);
 	idSpriteNoItems = engfunc(EngFunc_PrecacheModel,szSpriteNoItems);
 	//idSpriteItemWhite = engfunc(EngFunc_PrecacheModel,szSpriteItemWhite);
+	
+	 precache_model("models/rpgrocket.mdl")
+	
+	
 
 }
+
+
+public plugin_modules()
+{
+    require_module("engine")
+}
+
 
 public client_putinserver( id )
 {
@@ -384,6 +410,15 @@ public client_putinserver( id )
 	{
 		return;
 	}
+	
+	p_autobuy[id][PDATA_ITEM1] = -1
+	p_autobuy[id][PDATA_ITEM2] = -1
+	LoadData(id);
+	
+	jumpnum[id] = 0
+	dojump[id] = false
+	g_bCamera[id] = false 
+	
 
 	// Check for steam ID pending
 	static szPlayerID[32];
@@ -393,6 +428,11 @@ public client_putinserver( id )
 
 	iUserSpawnNumber[id] = 0;
 	bUserHasAutoRace[id] = false;
+	g_playerSpawns[id] = 0;
+	iProtectant[id] = false;
+
+	
+	PrintMessageInfo(id);
 	
 	// Then the player doesn't have a steam id, lets make them reconnect
 	if ( equal(szPlayerID, "STEAM_ID_PENDING") )
@@ -450,6 +490,9 @@ public client_connect( id )
 
 	client_cmd( id, "hud_centerid 0" );
 
+	p_autobuy[id][PDATA_ITEM1] = -1
+	p_autobuy[id][PDATA_ITEM2] = -1
+	LoadData(id);
 
 	p_data[id][P_RESPAWNBY]				= 0;
 	p_data[id][P_SPECMODE]				= 0;
@@ -462,6 +505,11 @@ public client_connect( id )
 
 	iUserSpawnNumber[id] = 0;
 	bUserHasAutoRace[id] = false;
+	g_playerSpawns[id] = 0;
+	iProtectant[id] = false;
+	g_bCamera[id] = false;
+	
+	
 
 	// User should have no items on connect...
 	g_iShopMenuItems[id][ITEM_SLOT_ONE] = ITEM_NONE;
@@ -514,6 +562,12 @@ public client_disconnect( id )
 	{
 		return;
 	}
+	
+	SaveData(id);
+	
+	jumpnum[id] = 0
+	dojump[id] = false
+	g_bCamera[id] = false
 
 	// Update the user's timestamps for each race if we're saving XP
 	DB_UpdateTimestamp( id );
@@ -533,6 +587,12 @@ public client_disconnect( id )
 
 	iUserSpawnNumber[id] = 0;
 	bUserHasAutoRace[id] = false;
+	
+	 g_playerSpawns[id] = 0;
+	 iProtectant[id] = false;
+	 
+	 PrintMessageInfo(id);
+	 
 	
 	// Reset xp assist
 	for ( new i = 0; i < MAXPLAYERS; i++ )
@@ -653,6 +713,32 @@ public client_PreThink( id )
 						entity_set_int( id, EV_INT_flTimeStepSound, 200 );
 					}
 				}
+				
+				
+				if ( SM_GetSkillLevel( id, SKILL_DARKFLIGHT ) > 0 ) { 
+				
+					static iSkillLevel;
+					iSkillLevel = SM_GetSkillLevel(id, SKILL_DARKFLIGHT);
+					
+					entity_set_int( id, EV_INT_flTimeStepSound, 999 );
+				
+					new nbut = get_user_button(id)
+					new obut = get_user_oldbutton(id)
+					if((nbut & IN_JUMP) && !(get_entity_flags(id) & FL_ONGROUND) && !(obut & IN_JUMP))
+					{
+						if(jumpnum[id] < p_darkflight[iSkillLevel-1])
+						{
+							dojump[id] = true
+							jumpnum[id]++
+						}
+					}
+					if((nbut & IN_JUMP) && (get_entity_flags(id) & FL_ONGROUND))
+					{
+						jumpnum[id] = 0
+					}
+				
+				}
+
 			}
 
 			// Day of Defeat
@@ -717,6 +803,7 @@ public client_PreThink( id )
 
 	return;
 }
+
 
 public plugin_natives()
 {
@@ -784,4 +871,83 @@ public native_filter( const name[], index, trap )
 	}
 
 	return PLUGIN_CONTINUE;
+}
+
+
+
+
+
+
+
+
+public SaveData(id) 
+{
+	new Name[32];
+	get_user_name(id, Name, 31);
+	
+	static Data[64]
+	formatex(Data, sizeof(Data) - 1, "^"%i^" ^"%i^" ^"%i^"", PlayerBankXP[id], p_autobuy[id][PDATA_ITEM1], p_autobuy[id][PDATA_ITEM2] )
+	
+	new Save[64]
+	format(Save,sizeof(Save) - 1, "^"%s^" %s", Name, Data)
+	
+	new Line[128], Linie, IsPlayer = false, Arg1[32]
+	
+	new FileOpen = fopen(DataFile, "rt")
+	while(!feof(FileOpen)) 
+	{
+		fgets(FileOpen, Line, 127)
+		trim(Line)
+		
+		parse(Line, Arg1, 31)
+		
+		if (equali(Arg1, Name)) 
+		{
+			write_file(DataFile, Save, Linie)
+			IsPlayer = true
+			break
+		}
+		
+		Linie++
+	}
+	fclose(FileOpen)
+	if (!IsPlayer) 
+	{
+		write_file(DataFile, Save, -1)
+	}
+}
+
+public LoadData(id) 
+{
+	new Name[32];
+	get_user_name(id, Name, 31);
+	
+	new Line[128], IsPlayer = false, Arg1[32], Arg2[32], Arg3[32], Arg4[32];
+	
+	new FileOpen = fopen(DataFile, "rt")
+	while(!feof(FileOpen)) 
+	{
+		fgets(FileOpen, Line, 127)
+		trim(Line)
+		
+		parse(Line, Arg1, 31, Arg2, 31, Arg3, 31, Arg4, 31)
+		
+		if (equali(Arg1, Name)) 
+		{
+			PlayerBankXP[id] = str_to_num(Arg2)
+			p_autobuy[id][PDATA_ITEM1] = str_to_num(Arg3)
+			p_autobuy[id][PDATA_ITEM2] = str_to_num(Arg4)
+			
+			IsPlayer = true
+			break
+		}
+	}
+	fclose(FileOpen)
+	
+	if (!IsPlayer) 
+	{
+		PlayerBankXP[id] = 0;
+		p_autobuy[id][PDATA_ITEM1] = -1
+		p_autobuy[id][PDATA_ITEM2] = -1
+	}
 }

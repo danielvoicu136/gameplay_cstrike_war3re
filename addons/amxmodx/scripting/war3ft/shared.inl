@@ -30,6 +30,13 @@ public SHARED_INVIS_Set( id )
 		if ( iInvisLevel > 0 )
 		{
 			iInvisLevel = floatround( float( iInvisLevel ) / INVIS_CLOAK_DIVISOR );
+			
+		// if you are more visible then cloak , just give them cloak 
+			if(iInvisLevel > get_pcvar_num( CVAR_wc3_cloak ))
+			{
+				iInvisLevel = get_pcvar_num( CVAR_wc3_cloak ) 
+			}
+			
 		}
 		else
 		{
@@ -40,7 +47,7 @@ public SHARED_INVIS_Set( id )
 	// If the player is holding a knife they should be more invisible
 	if ( SHARED_IsHoldingKnife( id ) )
 	{
-		iInvisLevel /= 2;
+		iInvisLevel /= 3;
 	}
 
 	if ( iInvisLevel )
@@ -1616,13 +1623,13 @@ public _SHARED_Teleport( parm[] )
 			// Move the user
 			SHARED_Teleport( id, vOrigin );
 
-			client_print( id, print_chat, "%s You are stuck! Ahhh! Moving you back to your spawn!", g_MODclient );
+			client_print( id, print_chat, "%s Unlucky ... Moving you back to your spawn!", g_MODclient );
 		}
 
 		// We can't move the user - that sux0rsz
 		else
 		{
-			client_print( id, print_chat, "%s Sorry, I know you're stuck, but I can't move you right now :/", g_MODclient );
+			client_print( id, print_chat, "%s Sorry, I know you're stuck, but I can't move you right now", g_MODclient );
 		}
 	}
 }
@@ -1659,4 +1666,40 @@ SHARED_SetUserHealth( idUser, health)
 	}
 
 	return;
+}
+
+// Check if the map have low HP such as 35hp , 1hp , etc 
+public SHARED_SetMapHealthStyle( )
+{
+	new iPlayersHealth = 0;
+	new iPlayersNumber = 0;
+	new iPlayersAverage = 0; 
+	
+	new players[32], numberofplayers, id;
+	
+	get_players(players, numberofplayers, "a");
+
+	// Loop through each player 
+	for (new i = 0; i < numberofplayers; i++)
+	{
+		id = players[i];
+
+		if (is_user_alive(id) && (get_user_team(id) == 1 || get_user_team(id) == 2) )
+		{
+			iPlayersHealth += get_user_health(id);
+			iPlayersNumber++;
+		}
+	}
+	
+	 iPlayersAverage = floatround( iPlayersHealth / iPlayersNumber ) ; 
+	 
+	 if( iPlayersAverage < 50 )
+	 {
+		g_bLowHealthMap = true;
+	 }
+	 else 
+	 {
+		g_bLowHealthMap = false;
+	 } 
+	
 }

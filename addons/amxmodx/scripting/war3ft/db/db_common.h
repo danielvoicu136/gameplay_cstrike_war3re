@@ -3,18 +3,18 @@
 .*/
 
 // Type of SQlite database synchronization
-#define SQLITE_SYNC_OFF				0
-#define SQLITE_SYNC_NORMAL			1
-#define SQLITE_SYNC_FULL			2
+#define SQLITE_SYNC_OFF 0
+#define SQLITE_SYNC_NORMAL 1
+#define SQLITE_SYNC_FULL 2
 
 // Based on what we're saving by (FT_saveby)
-#define DB_SAVEBY_STEAMID			0
-#define DB_SAVEBY_IP				1
-#define DB_SAVEBY_NAME				2
+#define DB_SAVEBY_STEAMID 0
+#define DB_SAVEBY_IP 1
+#define DB_SAVEBY_NAME 2
 
 // Used with g_DBType
-#define DB_SQLITE			0
-#define DB_MYSQLX			1
+#define DB_SQLITE 0
+#define DB_MYSQLX 1
 
 // Lets us know that the DB is ready
 new bool:bDBAvailable = false;
@@ -27,7 +27,7 @@ new Handle:g_DBTuple;
 new Handle:g_DBConn;
 
 // SQLite
-//new Sql:g_DB;
+// new Sql:g_DB;
 new g_DBType = -1;
 
 // Player's Unique ID
@@ -44,15 +44,15 @@ new arrPlayerLevelsInfo[33][MAX_RACES];
 forward DB_DetermineType();
 forward DB_Init();
 forward DB_Close();
-forward DB_SaveXP( id, bThreaded );
-forward DB_GetKey( id, szKey[], len );
-forward DB_GetKeyName( szKeyName[], len );
-forward DB_GetAllXP( id );
-forward DB_SetDataForRace( id );
-forward DB_FormatString( text[], len );
-forward DB_UpdateTimestamp( id );
+forward DB_SaveXP(id, bThreaded);
+forward DB_GetKey(id, szKey[], len);
+forward DB_GetKeyName(szKeyName[], len);
+forward DB_GetAllXP(id);
+forward DB_SetDataForRace(id);
+forward DB_FormatString(text[], len);
+forward DB_UpdateTimestamp(id);
 forward DB_Prune();
-forward DB_FetchUniqueID( id );
-forward DB_GetUniqueID( id );
-forward DB_SaveAll( bThreaded );
+forward DB_FetchUniqueID(id);
+forward DB_GetUniqueID(id);
+forward DB_SaveAll(bThreaded);
 forward bool:DB_Connection_Available();

@@ -13,8 +13,8 @@ new g_UltimateIcons[MAX_RACES-1][32] =
 "suit_full",			// Shadow Hunter
 "cross",				// Warden
 "dmg_gas",				// Crypt Lord
-"dmg_rad",				// Draenei
-"item_longjump",		// Worgen
+"cross",				// Draenei
+"item_battery",			// Worgen
 "dmg_shock",			// Goblin
 "item_healthkit",		// Tauren
 "dmg_heat",				// Wisp

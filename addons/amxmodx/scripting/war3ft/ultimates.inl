@@ -179,10 +179,10 @@ ULT_Icon( id, flag )
 			case 4: r=0,	g=0,	b=255;		// Night Elf
 			case 5: r=255,	g=0,	b=0;		// Blood Mage
 			case 6: r=0,	g=200,	b=200;		// Shadow Hunter
-			case 7: r=255, g=0, b=0;    // Warden
-			case 8: r=0, g=255, b=0;    // Crypt Lord
-			case 9: r=0, g=0, b=255;    // Draenei
-			case 10: r=128, g=0, b=0;   // Worgen
+			case 7: r=255, g=0, b=0;   		 	// Warden
+			case 8: r=0, g=255, b=0;    		// Crypt Lord
+			case 9: r=0, g=255, b=0;    		// Draenei
+			case 10: r=147, g=112, b=219;   	// Worgen
 			case 11: r=255, g=165, b=0; // Goblin
 			case 12: r=139, g=69, b=19; // Tauren
 			case 13: r=0, g=128, b=128; // Wisp
@@ -255,7 +255,7 @@ ULT_Icon( id, flag )
 			{
 
 				// Change colors for Suicide Bomber or Immolate
-				if ( SM_GetSkillLevel( id, ULTIMATE_SUICIDE ) > 0 || SM_GetSkillLevel( id, ULTIMATE_IMMOLATE ) > 0 )
+				if ( SM_GetSkillLevel( id, ULTIMATE_SUICIDE ) > 0 || SM_GetSkillLevel( id, ULTIMATE_IMMOLATE ) > 0 || SM_GetSkillLevel( id, ULTIMATE_WORGENFRENZY ) > 0)
 				{
 					r=255, g=255, b=255;
 				}

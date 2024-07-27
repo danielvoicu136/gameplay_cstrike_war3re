@@ -99,8 +99,8 @@ fCreateBonusClass(idUser)
 	// Set position
 	set_pev(ent, pev_origin, origin);
 		
-//	fm_set_rendering(ent,kRenderFxGlowShell,arrColorItemsRGB[0],arrColorItemsRGB[1],arrColorItemsRGB[2],kRenderTransAlpha, 128);
-	fm_set_rendering(ent,kRenderFxGlowShell,arrColorItemsRGB[0],arrColorItemsRGB[1],arrColorItemsRGB[2],kRenderNormal, 128);
+
+//	fm_set_rendering(ent,kRenderFxGlowShell,arrColorItemsRGB[0],arrColorItemsRGB[1],arrColorItemsRGB[2],kRenderNormal, 128);
 	
 	ArrayPushCell(arrIntTotalLootEntity, ent);
 	ArrayPushCell(arrIntOriginsLootX, FloatToNum(origin[0]));
@@ -148,8 +148,8 @@ fCreateItemsClass(idUser)
 	// Set position
 	set_pev(ent, pev_origin, origin);
 		
-//	fm_set_rendering(ent,kRenderFxGlowShell,arrColorItemsRGB[0],arrColorItemsRGB[1],arrColorItemsRGB[2],kRenderTransAlpha, 128);
-	fm_set_rendering(ent,kRenderFxGlowShell,arrColorItemsRGB[0],arrColorItemsRGB[1],arrColorItemsRGB[2],kRenderNormal, 128);
+
+//	fm_set_rendering(ent,kRenderFxGlowShell,arrColorItemsRGB[0],arrColorItemsRGB[1],arrColorItemsRGB[2],kRenderNormal, 128);
 	
 	ArrayPushCell(arrIntTotalLootEntity, ent);
 	ArrayPushCell(arrIntOriginsLootX, FloatToNum(origin[0]));
@@ -456,20 +456,29 @@ public fEffectRemoveLootItem(arr[2]) // arr = [idEntLootItem, Float:fStart
 	}
 }
 
-public client_PostThink(idUser)
+public client_PostThink(id)
 {
+	if (!is_user_alive(id)) return;
+	
 	if(get_pcvar_num( CVAR_wc3_loot_items ) > 0)
 	{
-		if (!is_user_alive(idUser) || ArraySize(arrIntTotalLootEntity) == 0) return;
-
 		for (new i = 0; i < ArraySize(arrIntTotalLootEntity); i++)
 		{
 			new iSprite = ArrayGetCell(arrIntDrawSpriteItems, i);
 			new iScale = ArrayGetCell(arrIntScaleSpriteItems, i);
-			fDrawSprite(idUser,i,iSprite,iScale);
+			 // fDrawSprite(id,i,iSprite,iScale);
 		}
 	}
 	
+	if(dojump[id] == true)
+	{
+		new Float:velocity[3]	
+		entity_get_vector(id,EV_VEC_velocity,velocity)
+		velocity[2] = random_float(265.0,285.0)
+		entity_set_vector(id,EV_VEC_velocity,velocity)
+		dojump[id] = false
+		return;
+	}
 	return;
 }
 
@@ -509,8 +518,18 @@ public player_Touch(idEntityTouched, idUserTouch)
 								bIsItemUserSlot(idUserTouch,ITEM_SLOT_ONE) != iItemVictimShop1 &&
 								bIsItemUserSlot(idUserTouch,ITEM_SLOT_TWO) != iItemVictimShop1)
 							{
+								if(iItemVictimShop1 == ITEM_RING)
+								{
+									g_iTotalRings[idUserTouch] = 4;
+									ITEM_GiveItem( idUserTouch, iItemVictimShop1);
+									
+
+								}
+								else 
+								{ 
+									ITEM_GiveItem( idUserTouch, iItemVictimShop1);
+								}
 								
-								ITEM_GiveItem( idUserTouch, iItemVictimShop1);
 							}
 							else
 							{
@@ -529,7 +548,16 @@ public player_Touch(idEntityTouched, idUserTouch)
 								bIsItemUserSlot(idUserTouch,ITEM_SLOT_ONE) != iItemVictimShop2 &&
 								bIsItemUserSlot(idUserTouch,ITEM_SLOT_TWO) != iItemVictimShop2)
 							{
-								ITEM_GiveItem( idUserTouch, iItemVictimShop2 );
+									if(iItemVictimShop2 == ITEM_RING)
+									{
+										g_iTotalRings[idUserTouch] = 4;
+										ITEM_GiveItem( idUserTouch, iItemVictimShop2);
+
+									}
+									else 
+									{ 
+										ITEM_GiveItem( idUserTouch, iItemVictimShop2);
+									}
 							}
 							else
 							{

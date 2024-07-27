@@ -105,6 +105,7 @@ public client_damage( iAttacker, iVictim, iDamage, iWeapon, iHitPlace, TA )
 		OR_SkillsOffensive( iAttacker, iVictim, iWeapon, iDamage, iHitPlace );
 		NE_SkillsOffensive( iAttacker, iVictim, iWeapon, iDamage, iHitPlace );
 		BM_SkillsOffensive( iAttacker, iVictim, iDamage );
+		DR_SkillsOffensive( iAttacker, iVictim );
 		SH_SkillsOffensive( iAttacker, iVictim );
 		WA_SkillsOffensive( iAttacker, iVictim, iHitPlace );
 		CL_SkillsOffensive( iAttacker, iVictim, iHitPlace );
@@ -369,6 +370,8 @@ public EVENT_Spawn( id )
 
 	// Should be called at the end of each spawn
 	WC3_PostSpawn( id );
+	
+	SH_HealingWave( id );  //sometimes healing is now working ? maybe it will fix 
 
 	return HAM_HANDLED;
 }
@@ -442,7 +445,7 @@ public EVENT_PlayerInitialSpawn( id )
 	}
 
 	// Display the new Chameleon skills for the round
-	if ( p_data[id][P_RACE] == 9 && get_pcvar_num( CVAR_wc3_cham_random ) )
+	if ( p_data[id][P_RACE] == RACE_CHAMELEON && get_pcvar_num( CVAR_wc3_cham_random ) )
 	{
 		WC3_ShowRaceInfo( id );
 	}
@@ -502,6 +505,9 @@ public EVENT_NewRound()
 	}
 
 	g_EndRound = false;
+	
+	// set the check after users spawn so we can determine the style of map 
+	set_task(1.0, "SHARED_SetMapHealthStyle");
 }
 
 // Called when a user looks somewhere
@@ -553,6 +559,12 @@ public TRIGGER_TraceLine( Float:v1[3], Float:v2[3], noMonsters, pentToSkip )
 						{
 							BM_ULT_Immolate( iAttacker, iVictim );
 						}
+						
+						else if ( SM_GetSkillLevel( iAttacker, ULTIMATE_WORGENFRENZY ) > 0 )
+						{
+							WO_ULT_Frenzy( iAttacker, iVictim );
+						}
+						
 					}
 
 					// No longer searching since we found a target
@@ -686,4 +698,68 @@ public TRIGGER_TraceLine( Float:v1[3], Float:v2[3], noMonsters, pentToSkip )
 	}
 	
 	return FMRES_IGNORED;
+}
+
+public HAM_Spawn_Post_XP(id)
+{
+			Add_GiveXP( id );
+		
+			if ( p_autobuy[id][PDATA_ITEM1] > -1 )
+			{
+				ITEM_Buy( id , p_autobuy[id][PDATA_ITEM1] );
+			}
+			
+			if ( p_autobuy[id][PDATA_ITEM2] > -1 )
+			{
+				ITEM_Buy( id, p_autobuy[id][PDATA_ITEM2] );
+			}
+			
+		// Check if the player is alive
+		if (is_user_alive(id) && p_data[id][P_LEVEL] < MAX_LEVELS)
+		{
+				g_playerSpawns[id]++;
+				//client_print(id, print_chat, "spawn increased");
+				
+			for (new i = 0; i < MAX_BONUS_ROUNDS; i++)
+			{
+				if (g_playerSpawns[id] == g_roundBonuses[i][0])
+				{
+					XP_Give( id, g_roundBonuses[i][1] );
+					
+					set_user_bankxp(id , get_user_bankxp(id) +  g_roundBonuses[i][1])
+					
+					client_print(id, print_chat, "* [WAR3FT] XP Bonus : You earned %d XP for played time. The next bonus has more XP !", g_roundBonuses[i][1]);
+					emit_sound( id, CHAN_STATIC, "warcraft3/Tomes.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
+					
+					break;
+				}
+			}
+			
+			   // Inform player about the next bonus
+			for (new i = 0; i < MAX_BONUS_ROUNDS; i++)
+			{
+				if (g_playerSpawns[id] < g_roundBonuses[i][0])
+				{
+					new spawnsLeft = g_roundBonuses[i][0] - g_playerSpawns[id];
+					if (spawnsLeft > 0)
+					{
+						client_print(id, print_chat, "* [WAR3FT] XP Bonus : Reward in %d spawns", spawnsLeft);
+					}
+					break;
+				}
+			}
+		
+       }
+}
+
+
+public EVENT_CurWeapon2(id) {
+	if(get_user_weapon(id) == CSW_KNIFE) 
+	{
+		if(SM_GetSkillLevel( id, SKILL_INVISIBILITY ) > 0 || ITEM_Has(id, ITEM_CLOAK ) > ITEM_NONE ) 
+		{
+			set_pev(id, pev_viewmodel2, szInvisKnife);
+		}
+	}
+
 }

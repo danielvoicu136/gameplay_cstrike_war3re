@@ -333,7 +333,7 @@ MYSQLX_GetAllXP( id )
 	for ( new i = 0; i < MAX_RACES; i++ )
 	{
 		g_iDBPlayerXPInfoStore[id][i] = 0;
-	
+		arrPlayerLevelsInfo[id][i] = 0;
 	}
 
 	// Get the XP!

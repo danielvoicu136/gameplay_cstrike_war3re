@@ -266,7 +266,7 @@ public _CS_MinModelsLoop()
 		
 		for ( i = 0; i < iNumPlayers; i++ )
 		{
-			query_client_cvar( iPlayers[i], "cl_minmodels", "_CS_CheckMinModelsValue" );
+			// query_client_cvar( iPlayers[i], "cl_minmodels", "_CS_CheckMinModelsValue" );
 		}
 	}
 }
