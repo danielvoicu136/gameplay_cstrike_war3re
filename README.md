@@ -1,4 +1,5 @@
 This is Warcraft as Counter-Strike Mod 
+![GitHub All Releases](https://img.shields.io/github/downloads/danielvoicu136/gameplay_cstrike_war3re/total?label=total%20downloads)
 - Select the race you prefer , each with different magic powers and eliminate your opponents
 - New Races 73 in total 
 - Race maximum level 25
