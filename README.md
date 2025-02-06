@@ -1,6 +1,6 @@
 This is Warcraft / Valorant as Counter-Strike Mod 
 - Select the race / hero you prefer , each with different magic powers and eliminate your opponents
-- New Races 73 in total 
+- New Races / Heroes 73 in total 
 - Race maximum level 25
 - Experience progression is balanced   
 - Skill maximum level 7 (each level enpower the skill) 
