@@ -1,4 +1,4 @@
-This is Warcraft / Valorant as Counter-Strike Mod 
+This is Warcraft / Valorant as Counter-Strike Mod ( Update 2024 ) 
 - Select the race / hero you prefer , each with different magic powers and eliminate your opponents
 - New Races / Heroes 73 in total 
 - Race / Hero maximum level 25
